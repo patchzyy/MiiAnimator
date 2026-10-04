@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <RootNamespace>MiiAnim.Core</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- Skinned 3DS Mii body (same mesh WheelWizard renders statically), sourced from ariankordi/FFL-Testing. -->
+        <EmbeddedResource Include="Assets\MaleBody.glb" LogicalName="MiiAnim.Core.Assets.MaleBody.glb" />
+        <EmbeddedResource Include="Assets\FemaleBody.glb" LogicalName="MiiAnim.Core.Assets.FemaleBody.glb" />
+    </ItemGroup>
+</Project>

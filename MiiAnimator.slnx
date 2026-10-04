@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/MiiAnim.Core/MiiAnim.Core.csproj" />
+    <Project Path="src/MiiAnimator/MiiAnimator.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/MiiAnim.Core.Tests/MiiAnim.Core.Tests.csproj" />
+  </Folder>
+</Solution>
