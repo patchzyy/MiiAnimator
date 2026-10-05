@@ -24,6 +24,9 @@ public sealed class PosePanel : ScrollViewer
     private Selection _builtFor = new(SelectionKind.None, MiiBone.Hip);
     private bool _builtAdvanced;
 
+    // Subclasses don't pick up the ScrollViewer template on their own; without it nothing scrolls.
+    protected override Type StyleKeyOverride => typeof(ScrollViewer);
+
     public PosePanel()
     {
         Content = _root;

@@ -21,6 +21,9 @@ public sealed class MiiEditorPanel : ScrollViewer
     private Ui.GestureBatcher? _batch;
     private bool _updating;
 
+    // Subclasses don't pick up the ScrollViewer template on their own; without it nothing scrolls.
+    protected override Type StyleKeyOverride => typeof(ScrollViewer);
+
     public MiiEditorPanel()
     {
         Content = _root;
