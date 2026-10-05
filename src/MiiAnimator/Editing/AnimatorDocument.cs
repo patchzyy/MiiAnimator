@@ -512,6 +512,33 @@ public sealed class AnimatorDocument
                 CurrentFrame = Animation.Length;
         });
 
+    // ---------- Events ----------
+
+    /// <summary>Adds an event marker at the current frame with a unique default name.</summary>
+    public void AddEvent()
+    {
+        var number = 1;
+        while (Animation.Events.Any(e => e.Name == $"event{number}"))
+            number++;
+        Edit(() => Animation.AddEvent(CurrentFrame, $"event{number}"));
+    }
+
+    public void ReplaceEvent(AnimEvent old, int frame, string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return;
+        frame = Math.Clamp(frame, 0, Animation.Length);
+        if (old.Frame == frame && old.Name == name.Trim())
+            return;
+        Edit(() =>
+        {
+            Animation.Events.Remove(old);
+            Animation.AddEvent(frame, name);
+        });
+    }
+
+    public void RemoveEvent(AnimEvent animEvent) => Edit(() => Animation.Events.Remove(animEvent));
+
     public void SetFps(int fps) => Edit(() => Animation.Fps = Math.Clamp(fps, 1, 240));
 
     public void SetName(string name) => Edit(() => Animation.Name = string.IsNullOrWhiteSpace(name) ? "Untitled" : name.Trim(), animationChanged: false);

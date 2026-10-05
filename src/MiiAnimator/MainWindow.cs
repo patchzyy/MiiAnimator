@@ -1,3 +1,4 @@
+using System.Globalization;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
@@ -321,6 +322,55 @@ public sealed class MainWindow : Window
             )
         );
 
+        root.Children.Add(Ui.Section("Events"));
+        root.Children.Add(
+            Ui.Hint("Named markers that apps like WheelWizard react to when playback reaches them (e.g. swap_gender, play_sound).")
+        );
+        var eventList = new StackPanel { Spacing = 4 };
+        root.Children.Add(eventList);
+        root.Children.Add(Ui.Buttons(Ui.Button("Add event here", _doc.AddEvent, "Adds an event marker on the current frame.")));
+        List<AnimEvent> shownEvents = [];
+
+        void RefreshEvents()
+        {
+            if (shownEvents.SequenceEqual(_doc.Animation.Events))
+                return;
+            shownEvents = [.. _doc.Animation.Events];
+            eventList.Children.Clear();
+            foreach (var animEvent in shownEvents)
+            {
+                var row = new Grid { ColumnDefinitions = new ColumnDefinitions("58,*,Auto,Auto"), ColumnSpacing = 4 };
+                var frameBox = new TextBox { Text = animEvent.Frame.ToString(CultureInfo.InvariantCulture), FontSize = 12.5 };
+                var nameBox = new TextBox { Text = animEvent.Name, FontSize = 12.5, MaxLength = AnimEvent.MaxNameLength };
+                void Commit()
+                {
+                    var frame = int.TryParse(frameBox.Text, NumberStyles.Integer, CultureInfo.InvariantCulture, out var f) ? f : animEvent.Frame;
+                    _doc.ReplaceEvent(animEvent, frame, nameBox.Text ?? "");
+                }
+
+                foreach (var box in new[] { frameBox, nameBox })
+                {
+                    box.LostFocus += (_, _) => Commit();
+                    box.KeyDown += (_, e) =>
+                    {
+                        if (e.Key == Key.Enter)
+                            Commit();
+                    };
+                }
+
+                var go = Ui.Button("Go", () => _doc.SetFrame(animEvent.Frame), "Jump to this event.");
+                var remove = Ui.Button("✕", () => _doc.RemoveEvent(animEvent), "Delete this event.");
+                Grid.SetColumn(nameBox, 1);
+                Grid.SetColumn(go, 2);
+                Grid.SetColumn(remove, 3);
+                row.Children.Add(frameBox);
+                row.Children.Add(nameBox);
+                row.Children.Add(go);
+                row.Children.Add(remove);
+                eventList.Children.Add(row);
+            }
+        }
+
         var file = Ui.Hint("");
         root.Children.Add(Ui.Section("File"));
         root.Children.Add(file);
@@ -333,6 +383,7 @@ public sealed class MainWindow : Window
             var keys = _doc.Animation.Tracks.Sum(t => t.Value.Count);
             file.Text = $"{keys} keys on {_doc.Animation.Tracks.Count} channels · about {MiiAnimFormat.Write(_doc.Animation).Length + 74} bytes as .miianim"
                 + (_doc.FilePath is null ? "" : $"\n{_doc.FilePath}");
+            RefreshEvents();
         }
 
         _doc.AnimationChanged += Refresh;

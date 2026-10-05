@@ -119,7 +119,13 @@ public sealed class PosePanel : ScrollViewer
 
     private void BuildFace()
     {
-        _root.Children.Add(Ui.Hint("Pick an expression. It's used from this frame until the next face key."));
+        _root.Children.Add(
+            Ui.Hint(
+                "Pick an expression. It's used from this frame until the next face key.\n"
+                    + "Default shows the Mii's own eyes and mouth, so keep it as the base and only switch for moments "
+                    + "(a blink, a wink, a shout). Other expressions only swap the parts they need; hover one to see which."
+            )
+        );
         var grid = new UniformGrid { Columns = 2 };
         foreach (var expression in MiiExpressionInfo.All)
         {
@@ -131,6 +137,7 @@ public sealed class PosePanel : ScrollViewer
                 Margin = new Thickness(0, 0, 4, 4),
                 FontSize = 12,
             };
+            ToolTip.SetTip(button, MiiExpressionInfo.Description(expression));
             button.Click += (_, _) => _doc!.SetExpression(expression);
             _refreshers.Add(() =>
                 button.IsChecked = MiiExpressionInfo.FromValue(_doc!.CurrentValue(TrackId.Expression)) == expression

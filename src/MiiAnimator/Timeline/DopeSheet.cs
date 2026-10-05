@@ -29,7 +29,9 @@ public sealed class DopeSheet : Control
     private static readonly IBrush OutOfRange = new SolidColorBrush(Color.FromArgb(120, 0, 0, 0));
     private static readonly IBrush KeyBrush = new SolidColorBrush(Color.FromRgb(225, 228, 235));
     private static readonly IBrush KeySelected = new SolidColorBrush(Color.FromRgb(255, 190, 60));
-    private static readonly Pen GridPen = new(new SolidColorBrush(Color.FromArgb(28, 255, 255, 255)), 1);
+    private static readonly IBrush EventBrush = new SolidColorBrush(Color.FromRgb(150, 95, 230));
+    private static readonly Pen EventLinePen = new(new SolidColorBrush(Color.FromArgb(70, 150, 95, 230)), 1);
+    private static readonly Pen GridPen =new(new SolidColorBrush(Color.FromArgb(28, 255, 255, 255)), 1);
     private static readonly Typeface UiTypeface = new("Inter");
 
     private AnimatorDocument? _doc;
@@ -246,6 +248,24 @@ public sealed class DopeSheet : Control
 
         var secondsText = Text($"{doc.Animation.DurationSeconds:0.##}s @ {doc.Animation.Fps}fps", 10.5, DimText);
         context.DrawText(secondsText, new Point(10, 6));
+
+        // Event markers: a flag on the ruler and a faint line through the rows.
+        using (context.PushClip(new Rect(LabelWidth, 0, Math.Max(0, Bounds.Width - LabelWidth), Bounds.Height)))
+        {
+            foreach (var animEvent in doc.Animation.Events)
+            {
+                var x = FrameToX(animEvent.Frame);
+                if (x < LabelWidth - 60 || x > Bounds.Width)
+                    continue;
+                context.DrawLine(EventLinePen, new Point(x, RulerHeight), new Point(x, Bounds.Height));
+                var name = Text(animEvent.Name, 10, Brushes.White);
+                var flag = new Rect(x, RulerHeight - 13, Math.Min(name.Width + 8, 90), 12);
+                context.DrawRectangle(EventBrush, null, flag, 2, 2);
+                using (context.PushClip(flag))
+                    context.DrawText(name, new Point(flag.X + 4, flag.Y + (flag.Height - name.Height) / 2));
+                context.DrawLine(new Pen(EventBrush, 1.5), new Point(x, RulerHeight - 13), new Point(x, RulerHeight));
+            }
+        }
 
         // Playhead.
         var px = FrameToX(doc.DisplayFrame);
