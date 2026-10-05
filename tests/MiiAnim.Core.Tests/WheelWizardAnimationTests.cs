@@ -90,3 +90,47 @@ public class WheelWizardAnimationWriter
             File.WriteAllBytes(Path.Combine(dir, name + MiiAnimFormat.FileExtension), MiiAnimFormat.Write(create()));
     }
 }
+
+public class WindowAnimationTests(ITestOutputHelper output)
+{
+    public static IEnumerable<object[]> Animations => WindowAnimations.All.Select(a => new object[] { a.Name });
+
+    private static MiiAnimation Get(string name) => WindowAnimations.All.Single(a => a.Name == name).Create();
+
+    [Theory]
+    [MemberData(nameof(Animations))]
+    public void StaysOutOfTheHeadBodyAndWindow(string name)
+    {
+        var results = ClipCheck.Run(Get(name), female: false, window: WindowAnimations.Window);
+        var report = ClipCheck.Describe(results, headLimit: 1f, torsoLimit: 0.8f);
+        output.WriteLine(report.Length == 0 ? "clean" : report);
+        Assert.True(report.Length == 0, report);
+    }
+
+    [Theory]
+    [MemberData(nameof(Animations))]
+    public void EndsInTheRestPose(string name)
+    {
+        var animation = Get(name);
+        var rig = new MiiRig(MiiBodyModel.Get(false));
+        var last = rig.Evaluate(animation, animation.Length);
+        foreach (var bone in MiiSkeletonInfo.AllBones)
+            Assert.True(Vector3.Distance(rig.RestPose.WorldPosition[(int)bone], last.WorldPosition[(int)bone]) < 0.5f, $"{bone} not at rest");
+        Assert.Equal(MiiExpression.Normal, last.Expression);
+        if (name.Contains("idle"))
+        {
+            var first = rig.Evaluate(animation, 0);
+            foreach (var bone in MiiSkeletonInfo.AllBones)
+                Assert.True(Vector3.Distance(first.WorldPosition[(int)bone], last.WorldPosition[(int)bone]) < 0.5f, $"{bone} doesn't loop");
+        }
+    }
+
+    [Fact]
+    public void WriteWindowAnimations()
+    {
+        var dir = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "samples", "wheelwizard");
+        Directory.CreateDirectory(dir);
+        foreach (var (name, create) in WindowAnimations.All)
+            File.WriteAllBytes(Path.Combine(dir, name + MiiAnimFormat.FileExtension), MiiAnimFormat.Write(create()));
+    }
+}

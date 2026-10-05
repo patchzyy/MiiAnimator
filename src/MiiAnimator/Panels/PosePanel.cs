@@ -238,6 +238,23 @@ public sealed class PosePanel : ScrollViewer
                 MirrorLimbButton(limb)
             )
         );
+        if (leg)
+            card.Children.Add(
+                Ui.Buttons(
+                    Ui.Button(
+                        "Put foot on floor",
+                        () =>
+                            doc.SetValues(
+                                [
+                                    (TrackId.Limb(limb, Channel.TargetY), 0f),
+                                    (TrackId.Limb(limb, Channel.TargetRotX), 0f),
+                                    (TrackId.Limb(limb, Channel.TargetRotZ), 0f),
+                                ]
+                            ),
+                        "Plants the foot flat on the floor on this frame (keeps its left/right and forward position)."
+                    )
+                )
+            );
         _root.Children.Add(Ui.Card(card));
 
         _root.Children.Add(Ui.Section($"{char.ToUpperInvariant(joint[0])}{joint[1..]}"));

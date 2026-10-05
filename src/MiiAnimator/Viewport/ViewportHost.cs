@@ -146,6 +146,8 @@ public sealed class ViewportHost : Panel
                 doc.IsPlaying ? 0 : _hoverMask
             ),
             Ghosts = ghosts,
+            Scene = doc.Scene,
+            CameraPosition = _camera.Position,
         };
 
         var aspect = (float)Math.Max(1, Bounds.Width) / (float)Math.Max(1, Bounds.Height);
@@ -664,10 +666,14 @@ public sealed class ViewportHost : Panel
                 var limb = drag.Handle.Limb!.Value;
                 var moved = _camera.DragInViewPlane(drag.Center, pixel, w, h);
                 var deltaCanonical = (moved - drag.Center) / RenderScale / _pose!.LocalScale[(int)MiiBone.Root];
+                var targetY = drag.StartValues[1] + deltaCanonical.Y;
+                // Feet: TargetY 0 is standing on the floor, so keep it from going below and snap onto it when close.
+                if (doc.Scene.SnapFeetToFloor && MiiSkeletonInfo.IsLeg(limb) && targetY < SceneProps.FloorSnapDistance)
+                    targetY = 0f;
                 doc.SetValues(
                     [
                         (TrackId.Limb(limb, Channel.TargetX), drag.StartValues[0] + deltaCanonical.X),
-                        (TrackId.Limb(limb, Channel.TargetY), drag.StartValues[1] + deltaCanonical.Y),
+                        (TrackId.Limb(limb, Channel.TargetY), targetY),
                         (TrackId.Limb(limb, Channel.TargetZ), drag.StartValues[2] + deltaCanonical.Z),
                     ]
                 );

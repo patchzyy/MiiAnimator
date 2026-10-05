@@ -97,6 +97,42 @@ public sealed class AnimBuilder(string name, int length, bool female)
         return this;
     }
 
+    /// <summary>
+    /// Like <see cref="Arm"/>, but <paramref name="worldWrist"/> is where the wrist should be in the scene on that frame
+    /// (e.g. on a window sill) taking the body and chest movement already keyed at that frame into account.
+    /// Key the body/chest first.
+    /// </summary>
+    public AnimBuilder ArmWorld(
+        MiiLimb limb,
+        int frame,
+        Vector3 worldWrist,
+        float swivel = 0,
+        Vector3 hand = default,
+        Interpolation interpolation = Interpolation.Smooth
+    )
+    {
+        var pose = Rig.Evaluate(Animation, frame);
+        var chest = (int)MiiBone.Chest;
+        var local = Vector3.Transform(worldWrist - pose.WorldPosition[chest], Quaternion.Inverse(pose.WorldRotation[chest]));
+        var restSpace = Rig.RestWorldPosition(MiiBone.Chest) + Vector3.Transform(local, Rig.RestWorldRotation(MiiBone.Chest));
+        return Arm(limb, frame, restSpace, swivel, hand, interpolation);
+    }
+
+    public AnimBuilder ArmsWorld(int frame, Vector3 leftWorldWrist, float swivel = 0, Vector3 hand = default, Interpolation interpolation = Interpolation.Smooth)
+    {
+        ArmWorld(MiiLimb.ArmL, frame, leftWorldWrist, swivel, hand, interpolation);
+        ArmWorld(MiiLimb.ArmR, frame, MirrorX(leftWorldWrist), -swivel, new Vector3(hand.X, -hand.Y, -hand.Z), interpolation);
+        return this;
+    }
+
+    /// <summary>FK legs for the whole animation (for shots where the legs are hidden and the body moves a lot).</summary>
+    public AnimBuilder FkLegs()
+    {
+        foreach (var leg in new[] { MiiLimb.LegL, MiiLimb.LegR })
+            Keys(Limb(leg, Channel.IkBlend), Interpolation.Hold, (0, 0));
+        return this;
+    }
+
     /// <summary>Same as <see cref="Arm"/> but for the right arm with the left-side coordinates mirrored.</summary>
     public AnimBuilder Arms(int frame, Vector3 leftWrist, float swivel = 0, Vector3 hand = default, Interpolation interpolation = Interpolation.Smooth)
     {

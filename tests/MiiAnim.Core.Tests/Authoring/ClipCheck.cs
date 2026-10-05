@@ -20,9 +20,14 @@ public static class ClipCheck
     private static readonly MiiBone[] ArmBones = [MiiBone.ArmL2, MiiBone.HandL, MiiBone.ArmR2, MiiBone.HandR];
     private static readonly MiiBone[] FootBones = [MiiBone.FootL, MiiBone.FootR];
 
-    public sealed record FrameResult(int Frame, float Head, MiiBone HeadBone, float Torso, MiiBone TorsoBone, MiiBone TorsoArm, float FootY);
+    public sealed record FrameResult(int Frame, float Head, MiiBone HeadBone, float Torso, MiiBone TorsoBone, MiiBone TorsoArm, float FootY, int WallHits = 0, MiiBone WallBone = default);
 
-    public static List<FrameResult> Run(MiiAnimation animation, bool female, float build = 64, float height = 64)
+    /// <summary>The animator's window prop (canonical units): a wall at z = Distance with an opening above Sill.</summary>
+    public sealed record Window(float Sill = 88f, float Distance = 58f, float HalfWidth = 80f, float SillDepth = 10f);
+
+    private static readonly MiiBone[] WallBones = [MiiBone.ArmL1, MiiBone.ArmL2, MiiBone.HandL, MiiBone.ArmR1, MiiBone.ArmR2, MiiBone.HandR];
+
+    public static List<FrameResult> Run(MiiAnimation animation, bool female, float build = 64, float height = 64, Window? window = null)
     {
         var body = MiiBodyModel.Get(female);
         var rig = new MiiRig(body);
@@ -44,10 +49,18 @@ public static class ClipCheck
                 footY = float.MaxValue;
             MiiBone headBone = default,
                 torsoBone = default,
-                torsoArm = default;
+                torsoArm = default,
+                wallBone = default;
+            var wallHits = 0;
             foreach (var (position, bone) in vertices)
             {
                 var skinned = Vector3.Transform(position, pose.SkinMatrix[(int)bone]);
+                if (window is not null && WallBones.Contains(bone) && HitsWindow(skinned, window))
+                {
+                    wallHits++;
+                    wallBone = bone;
+                }
+
                 if (FootBones.Contains(bone))
                     footY = MathF.Min(footY, skinned.Y);
                 if (!ArmBones.Contains(bone))
@@ -69,7 +82,26 @@ public static class ClipCheck
                 }
             }
 
-            results.Add(new FrameResult(frame, head, headBone, torsoMin, torsoBone, torsoArm, footY));
+            if (window is not null)
+            {
+                // The head outline (ellipsoid surface samples) against the wall.
+                var headRender = pose.HeadMatrixForRender(scale);
+                for (var a = 0; a < 12; a++)
+                for (var b = -2; b <= 2; b++)
+                {
+                    var yaw = a / 12f * MathF.Tau;
+                    var pitch = b / 5f * MathF.PI;
+                    var local = HeadCenter + HeadRadii * new Vector3(MathF.Cos(pitch) * MathF.Sin(yaw), MathF.Sin(pitch), MathF.Cos(pitch) * MathF.Cos(yaw)) * 0.95f;
+                    var canonical = Vector3.Transform(local, headRender) / (MiiBodyModel.CanonicalToRenderUnits * scale);
+                    if (HitsWindow(canonical, window))
+                    {
+                        wallHits += 3;
+                        wallBone = MiiBone.Head;
+                    }
+                }
+            }
+
+            results.Add(new FrameResult(frame, head, headBone, torsoMin, torsoBone, torsoArm, footY, wallHits, wallBone));
         }
 
         return results;
@@ -81,6 +113,7 @@ public static class ClipCheck
         var sb = new StringBuilder();
         Ranges(sb, "head", results.Where(r => r.Head < headLimit).ToList(), r => $"{r.Head:0.00} {r.HeadBone}");
         Ranges(sb, "torso", results.Where(r => r.Torso < torsoLimit).ToList(), r => $"{r.Torso:0.00} {r.TorsoArm} in {r.TorsoBone}");
+        Ranges(sb, "window", results.Where(r => r.WallHits > 2).ToList(), r => $"{r.WallHits} vertices of {r.WallBone}");
         return sb.ToString();
     }
 
@@ -91,10 +124,26 @@ public static class ClipCheck
             var j = i;
             while (j + 1 < hits.Count && hits[j + 1].Frame == hits[j].Frame + 1)
                 j++;
-            var worst = hits.Skip(i).Take(j - i + 1).MinBy(r => what == "head" ? r.Head : r.Torso)!;
+            var worst = hits.Skip(i).Take(j - i + 1).MinBy(r => what switch { "head" => r.Head, "torso" => r.Torso, _ => -r.WallHits })!;
             sb.AppendLine($"  {what} frames {hits[i].Frame}-{hits[j].Frame}, worst {worst.Frame}: {describe(worst)}");
             i = j + 1;
         }
+    }
+
+    /// <summary>Is a point inside the wall (outside the opening) or inside the sill ledge?</summary>
+    private static bool HitsWindow(Vector3 p, Window w)
+    {
+        const float tolerance = 1.5f;
+        var inOpening = MathF.Abs(p.X) < w.HalfWidth && p.Y > w.Sill - tolerance;
+        if (p.Z > w.Distance - 4f + tolerance && !inOpening)
+            return true;
+        var inLedge =
+            MathF.Abs(p.X) < w.HalfWidth + 12f
+            && p.Y > w.Sill - 5f
+            && p.Y < w.Sill - tolerance
+            && p.Z > w.Distance - w.SillDepth
+            && p.Z < w.Distance + 6f;
+        return inLedge;
     }
 
     private static (Vector3 Center, Vector3 Radii) Fit(MiiBodyModel body, MiiBone bone)

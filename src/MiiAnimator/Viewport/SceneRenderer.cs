@@ -26,6 +26,8 @@ public sealed class SceneFrame
     public required MiiDrawItem Main { get; init; }
     public IReadOnlyList<MiiDrawItem> Ghosts { get; init; } = [];
     public bool ShowGrid { get; init; } = true;
+    public Editing.SceneProps? Scene { get; init; }
+    public Vector3 CameraPosition { get; init; }
 }
 
 /// <summary>OpenGL renderer for the animator viewport. All calls must happen on the GL thread.</summary>
@@ -43,6 +45,11 @@ internal sealed unsafe class SceneRenderer : IDisposable
     private uint _shadowVao;
     private uint _shadowVbo;
     private int _shadowVertexCount;
+    private uint _floorVao;
+    private uint _floorVbo;
+    private int _floorVertexCount;
+    private uint _propVao;
+    private uint _propVbo;
 
     public SceneRenderer(GL gl, bool isEs)
     {
@@ -53,6 +60,8 @@ internal sealed unsafe class SceneRenderer : IDisposable
         _lineProgram = CreateProgram(header + Shaders.LineVertex, header + Shaders.LineFragment);
         CreateGrid();
         CreateShadow();
+        CreateFloor();
+        (_propVao, _propVbo, _) = UploadColored([]);
     }
 
     public void Render(SceneFrame frame, Matrix4x4 view, Matrix4x4 projection, int width, int height, Vector4 clearColor)
@@ -67,10 +76,14 @@ internal sealed unsafe class SceneRenderer : IDisposable
         _gl.BlendFuncSeparate(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha, BlendingFactor.One, BlendingFactor.OneMinusSrcAlpha);
         _gl.FrontFace(FrontFaceDirection.Ccw);
 
+        if (frame.Scene?.ShowFloor == true)
+            DrawFloor(view, projection);
         if (frame.ShowGrid)
             DrawGrid(frame, view, projection);
 
         DrawMii(frame, frame.Main, view, projection, depthWrite: true);
+        if (frame.Scene is { ShowWindow: true } scene)
+            DrawWindow(frame, scene, view, projection);
 
         // Onion skins: translucent, no depth writes so they never hide the real pose.
         foreach (var ghost in frame.Ghosts)
@@ -199,6 +212,110 @@ internal sealed unsafe class SceneRenderer : IDisposable
         }
 
         (_gridVao, _gridVbo, _gridVertexCount) = UploadColored(vertices);
+    }
+
+    // ---------- Props (preview only) ----------
+
+    private void DrawFloor(Matrix4x4 view, Matrix4x4 projection)
+    {
+        // Opaque, so anything below the ground (e.g. the start of an "appear from a hole") is hidden like in the app.
+        _gl.UseProgram(_lineProgram);
+        SetMatrix(_lineProgram, "uView", view);
+        SetMatrix(_lineProgram, "uProj", projection);
+        _gl.DepthMask(true);
+        _gl.Disable(EnableCap.CullFace);
+        _gl.BindVertexArray(_floorVao);
+        _gl.DrawArrays(PrimitiveType.Triangles, 0, (uint)_floorVertexCount);
+    }
+
+    private void CreateFloor()
+    {
+        var vertices = new List<float>();
+        const int segments = 64;
+        const float radius = 330f;
+        var center = new Vector4(0.27f, 0.29f, 0.33f, 1f);
+        var edge = new Vector4(0.2f, 0.215f, 0.25f, 1f);
+        for (var i = 0; i < segments; i++)
+        {
+            var a0 = i / (float)segments * MathF.Tau;
+            var a1 = (i + 1) / (float)segments * MathF.Tau;
+            AddVertex(vertices, new Vector3(0, -0.15f, 0), center);
+            AddVertex(vertices, new Vector3(MathF.Cos(a1) * radius, -0.15f, MathF.Sin(a1) * radius), edge);
+            AddVertex(vertices, new Vector3(MathF.Cos(a0) * radius, -0.15f, MathF.Sin(a0) * radius), edge);
+        }
+
+        (_floorVao, _floorVbo, _floorVertexCount) = UploadColored(vertices);
+    }
+
+    /// <summary>A wall with a window opening and a sill ledge, in front of the Mii (see <see cref="Editing.SceneProps"/>).</summary>
+    private void DrawWindow(SceneFrame frame, Editing.SceneProps scene, Matrix4x4 view, Matrix4x4 projection)
+    {
+        var s = frame.BodyScale * MiiBodyModel.CanonicalToRenderUnits;
+        // From behind the wall it would hide everything; only draw it from the front.
+        if (frame.CameraPosition.Z < scene.WindowDistance * s.Z)
+            return;
+
+        var v = new List<float>();
+        float d = scene.WindowDistance,
+            ow = scene.WindowHalfWidth,
+            sill = scene.WindowSill,
+            top = sill + scene.WindowHeight,
+            wallHalf = ow + 160f,
+            wallTop = top + 80f,
+            frameWidth = 8f;
+        var wall = new Vector4(0.78f, 0.72f, 0.63f, 1f);
+        var wood = new Vector4(0.5f, 0.33f, 0.2f, 1f);
+        var ledge = new Vector4(0.63f, 0.43f, 0.27f, 1f);
+
+        void Box(Vector3 min, Vector3 max, Vector4 color) => AddBox(v, min * s, max * s, color);
+
+        // Wall around the opening (4 pieces), a little thick so the opening has depth.
+        // The wall goes well below the floor so a Mii hiding below the sill stays hidden.
+        Box(new(-wallHalf, -420, d - 4), new(-ow, wallTop, d), wall);
+        Box(new(ow, -420, d - 4), new(wallHalf, wallTop, d), wall);
+        Box(new(-ow, -420, d - 4), new(ow, sill, d), wall);
+        Box(new(-ow, top, d - 4), new(ow, wallTop, d), wall);
+        // Frame on the camera side and the sill ledge sticking out on the Mii's side.
+        Box(new(-ow - frameWidth, sill, d), new(-ow, top, d + 3), wood);
+        Box(new(ow, sill, d), new(ow + frameWidth, top, d + 3), wood);
+        Box(new(-ow - frameWidth, top, d), new(ow + frameWidth, top + frameWidth, d + 3), wood);
+        Box(new(-ow - frameWidth - 4, sill - 5, d - Editing.SceneProps.SillDepth), new(ow + frameWidth + 4, sill, d + 6), ledge);
+
+        _gl.UseProgram(_lineProgram);
+        SetMatrix(_lineProgram, "uView", view);
+        SetMatrix(_lineProgram, "uProj", projection);
+        _gl.DepthMask(true);
+        _gl.Disable(EnableCap.CullFace);
+        _gl.BindVertexArray(_propVao);
+        _gl.BindBuffer(BufferTargetARB.ArrayBuffer, _propVbo);
+        var data = v.ToArray();
+        fixed (float* p = data)
+            _gl.BufferData(BufferTargetARB.ArrayBuffer, (nuint)(data.Length * 4), p, BufferUsageARB.DynamicDraw);
+        _gl.DrawArrays(PrimitiveType.Triangles, 0, (uint)(data.Length / 7));
+    }
+
+    /// <summary>An axis-aligned box with simple fixed shading per face (top brightest).</summary>
+    private static void AddBox(List<float> v, Vector3 min, Vector3 max, Vector4 color)
+    {
+        Vector4 Shade(float f) => new(color.X * f, color.Y * f, color.Z * f, color.W);
+
+        void Quad(Vector3 a, Vector3 b, Vector3 c, Vector3 d, Vector4 col)
+        {
+            AddVertex(v, a, col);
+            AddVertex(v, b, col);
+            AddVertex(v, c, col);
+            AddVertex(v, a, col);
+            AddVertex(v, c, col);
+            AddVertex(v, d, col);
+        }
+
+        Vector3 P(float x, float y, float z) => new(x, y, z);
+        Quad(P(min.X, max.Y, min.Z), P(max.X, max.Y, min.Z), P(max.X, max.Y, max.Z), P(min.X, max.Y, max.Z), Shade(1f)); // top
+        Quad(P(min.X, min.Y, min.Z), P(max.X, min.Y, min.Z), P(max.X, min.Y, max.Z), P(min.X, min.Y, max.Z), Shade(0.55f)); // bottom
+        Quad(P(min.X, min.Y, max.Z), P(max.X, min.Y, max.Z), P(max.X, max.Y, max.Z), P(min.X, max.Y, max.Z), Shade(0.9f)); // front (+Z)
+        Quad(P(min.X, min.Y, min.Z), P(max.X, min.Y, min.Z), P(max.X, max.Y, min.Z), P(min.X, max.Y, min.Z), Shade(0.7f)); // back
+        Quad(P(min.X, min.Y, min.Z), P(min.X, min.Y, max.Z), P(min.X, max.Y, max.Z), P(min.X, max.Y, min.Z), Shade(0.75f)); // left
+        Quad(P(max.X, min.Y, min.Z), P(max.X, min.Y, max.Z), P(max.X, max.Y, max.Z), P(max.X, max.Y, min.Z), Shade(0.75f)); // right
     }
 
     private void CreateShadow()
@@ -493,6 +610,10 @@ internal sealed unsafe class SceneRenderer : IDisposable
         _gl.DeleteBuffer(_gridVbo);
         _gl.DeleteVertexArray(_shadowVao);
         _gl.DeleteBuffer(_shadowVbo);
+        _gl.DeleteVertexArray(_floorVao);
+        _gl.DeleteBuffer(_floorVbo);
+        _gl.DeleteVertexArray(_propVao);
+        _gl.DeleteBuffer(_propVbo);
         _gl.DeleteProgram(_headProgram);
         _gl.DeleteProgram(_bodyProgram);
         _gl.DeleteProgram(_lineProgram);

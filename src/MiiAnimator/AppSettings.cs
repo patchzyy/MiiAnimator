@@ -7,6 +7,7 @@ public sealed class AppSettings
     public string? FflResourcePath { get; set; }
     public bool AdvancedMode { get; set; }
     public bool ShowCurveEditor { get; set; }
+    public Editing.SceneProps Scene { get; set; } = new();
 
     private static string FilePath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MiiAnimator", "settings.json");
 

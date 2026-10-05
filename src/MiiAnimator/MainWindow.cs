@@ -47,6 +47,7 @@ public sealed class MainWindow : Window
         WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
         _doc.AdvancedMode = _settings.AdvancedMode;
+        _doc.Scene = _settings.Scene;
         _heads.SetResourcePath(_settings.ResolveFflPath());
         _doc.New(Templates.Empty());
 
@@ -93,6 +94,11 @@ public sealed class MainWindow : Window
                     {
                         Item("Reset camera", "F", _viewport.FrameCharacter),
                         Item("Toggle onion skin", "O", ToggleOnion),
+                        new Separator(),
+                        Item("Toggle floor", null, () => ToggleScene(s => s.ShowFloor = !s.ShowFloor)),
+                        Item("Toggle window prop", null, () => ToggleScene(s => s.ShowWindow = !s.ShowWindow)),
+                        Item("Toggle snap feet to floor", null, () => ToggleScene(s => s.SnapFeetToFloor = !s.SnapFeetToFloor)),
+                        new Separator(),
                         Item("Toggle curve editor", "G", () => _transport!.CurvesToggle.IsChecked = !_transport.CurvesToggle.IsChecked),
                     },
                 },
@@ -322,6 +328,82 @@ public sealed class MainWindow : Window
             )
         );
 
+        root.Children.Add(Ui.Section("Preview scene"));
+        root.Children.Add(Ui.Hint("Helpers to animate against. They're only shown here and aren't saved in the .miianim."));
+        var sceneChecks = new List<Action>();
+        CheckBox SceneCheck(string text, string tip, Func<SceneProps, bool> get, Action<SceneProps, bool> set)
+        {
+            var check = new CheckBox { Content = text, FontSize = 12.5 };
+            ToolTip.SetTip(check, tip);
+            var updating = false;
+            check.IsCheckedChanged += (_, _) =>
+            {
+                if (!updating)
+                    ToggleScene(s => set(s, check.IsChecked == true));
+            };
+            sceneChecks.Add(() =>
+            {
+                updating = true;
+                check.IsChecked = get(_doc.Scene);
+                updating = false;
+            });
+            return check;
+        }
+
+        root.Children.Add(SceneCheck("Floor", "A solid floor at ground level. Hides anything below the ground.", s => s.ShowFloor, (s, v) => s.ShowFloor = v));
+        root.Children.Add(
+            SceneCheck(
+                "Snap IK feet to the floor",
+                "While dragging a foot it can't go below the floor and snaps onto it when close.",
+                s => s.SnapFeetToFloor,
+                (s, v) => s.SnapFeetToFloor = v
+            )
+        );
+        root.Children.Add(
+            SceneCheck(
+                "Window",
+                "A wall with a window in front of the Mii, like WheelWizard's profile card. Animate peeking and leaning on the sill.",
+                s => s.ShowWindow,
+                (s, v) => s.ShowWindow = v
+            )
+        );
+        var windowSliders = new StackPanel { Margin = new Thickness(20, 0, 0, 0) };
+        void WindowSlider(string label, double min, double max, Func<SceneProps, float> get, Action<SceneProps, float> set)
+        {
+            var row = new Grid { ColumnDefinitions = new ColumnDefinitions("90,*,36") };
+            var text = new TextBlock { Text = label, FontSize = 12, VerticalAlignment = VerticalAlignment.Center };
+            var slider = new Slider { Minimum = min, Maximum = max, Value = get(_doc.Scene) };
+            var value = new TextBlock { FontSize = 12, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            value.Text = $"{slider.Value:0}";
+            slider.ValueChanged += (_, e) =>
+            {
+                value.Text = $"{e.NewValue:0}";
+                set(_doc.Scene, (float)Math.Round(e.NewValue));
+                _settings.Save();
+                _doc.NotifySettingsChanged();
+            };
+            Grid.SetColumn(slider, 1);
+            Grid.SetColumn(value, 2);
+            row.Children.Add(text);
+            row.Children.Add(slider);
+            row.Children.Add(value);
+            windowSliders.Children.Add(row);
+        }
+
+        WindowSlider("Sill height", 40, 160, s => s.WindowSill, (s, v) => s.WindowSill = v);
+        WindowSlider("Distance", 30, 120, s => s.WindowDistance, (s, v) => s.WindowDistance = v);
+        WindowSlider("Width", 50, 160, s => s.WindowHalfWidth, (s, v) => s.WindowHalfWidth = v);
+        root.Children.Add(windowSliders);
+        void RefreshScene()
+        {
+            foreach (var refresh in sceneChecks)
+                refresh();
+            windowSliders.IsVisible = _doc.Scene.ShowWindow;
+        }
+
+        _doc.SettingsChanged += RefreshScene;
+        RefreshScene();
+
         root.Children.Add(Ui.Section("Events"));
         root.Children.Add(
             Ui.Hint("Named markers that apps like WheelWizard react to when playback reaches them (e.g. swap_gender, play_sound).")
@@ -400,6 +482,13 @@ public sealed class MainWindow : Window
         _timelineArea.ColumnDefinitions[1].Width = new GridLength(show ? 4 : 0);
         _timelineArea.ColumnDefinitions[2].Width = show ? new GridLength(1, GridUnitType.Star) : new GridLength(0);
         _curveEditor.IsVisible = show;
+    }
+
+    private void ToggleScene(Action<SceneProps> change)
+    {
+        change(_doc.Scene);
+        _settings.Save();
+        _doc.NotifySettingsChanged();
     }
 
     private void ToggleOnion()

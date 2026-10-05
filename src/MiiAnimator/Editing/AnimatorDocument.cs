@@ -59,6 +59,9 @@ public sealed class AnimatorDocument
     public bool AutoKey { get; set; } = true;
     public bool OnionSkin { get; set; }
     public bool AdvancedMode { get; set; }
+
+    /// <summary>Floor, window prop and foot snapping (editor preview settings).</summary>
+    public SceneProps Scene { get; set; } = new();
     public bool HasPendingChanges => _pending.Count > 0;
 
     public bool CanUndo => _undo.Count > 0;
