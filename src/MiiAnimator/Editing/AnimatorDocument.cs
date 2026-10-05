@@ -464,6 +464,17 @@ public sealed class AnimatorDocument
         SetValues(Mirror(current));
     }
 
+    /// <summary>Copies one arm or leg onto the other side, mirrored (FK bones, IK target and IK/FK mode).</summary>
+    public void MirrorLimbToOtherSide(MiiLimb limb)
+    {
+        var (upper, middle, end) = MiiSkeletonInfo.Chain(limb);
+        var current = new[] { upper, middle, end }
+            .SelectMany(b => TracksOf(Selection.OfBone(b)))
+            .Concat(TracksOf(Selection.OfLimb(limb)))
+            .ToDictionary(id => id, CurrentValue);
+        SetValues(Mirror(current));
+    }
+
     private static IEnumerable<(TrackId, float)> Mirror(IReadOnlyDictionary<TrackId, float> values)
     {
         foreach (var (id, value) in values)

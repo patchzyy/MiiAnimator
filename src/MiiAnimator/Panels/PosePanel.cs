@@ -175,7 +175,8 @@ public sealed class PosePanel : ScrollViewer
                         () => doc.SetLimbMode(l, ik: true),
                         $"IK: just drag the {(leg ? "foot" : "hand")} and the {(leg ? "knee" : "elbow")} follows. Great for planting feet.",
                         accent: true
-                    )
+                    ),
+                    MirrorLimbButton(l)
                 )
             );
             _root.Children.Add(Ui.Card(card));
@@ -225,7 +226,10 @@ public sealed class PosePanel : ScrollViewer
         var card = new StackPanel();
         card.Children.Add(new TextBlock { Text = $"Prefer rotating each bone? Switch to FK.", FontSize = 12, TextWrapping = TextWrapping.Wrap });
         card.Children.Add(
-            Ui.Buttons(Ui.Button("Switch to FK", () => doc.SetLimbMode(limb, ik: false), "FK: rotate the upper, lower and end bone one by one."))
+            Ui.Buttons(
+                Ui.Button("Switch to FK", () => doc.SetLimbMode(limb, ik: false), "FK: rotate the upper, lower and end bone one by one."),
+                MirrorLimbButton(limb)
+            )
         );
         _root.Children.Add(Ui.Card(card));
 
@@ -265,6 +269,17 @@ public sealed class PosePanel : ScrollViewer
     }
 
     private bool _updatingChecks;
+
+    private Control MirrorLimbButton(MiiLimb limb)
+    {
+        var end = MiiSkeletonInfo.IsLeg(limb) ? "foot" : "hand";
+        var other = MiiSkeletonInfo.Mirror(limb);
+        return Ui.Button(
+            $"Mirror to other {end}",
+            () => _doc!.MirrorLimbToOtherSide(limb),
+            $"Copies this pose onto the {MiiSkeletonInfo.FriendlyName(other)}, mirrored. The {MiiSkeletonInfo.FriendlyName(limb)} stays as it is."
+        );
+    }
 
     private void BuildKeyTools()
     {
