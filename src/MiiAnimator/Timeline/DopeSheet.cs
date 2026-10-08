@@ -30,6 +30,7 @@ public sealed class DopeSheet : Control
     private static readonly IBrush KeyBrush = new SolidColorBrush(Color.FromRgb(225, 228, 235));
     private static readonly IBrush KeySelected = new SolidColorBrush(Color.FromRgb(255, 190, 60));
     private static readonly IBrush EventBrush = new SolidColorBrush(Color.FromRgb(150, 95, 230));
+    private static readonly IBrush ParticleBrush = new SolidColorBrush(Color.FromArgb(200, 70, 200, 210));
     private static readonly Pen EventLinePen = new(new SolidColorBrush(Color.FromArgb(70, 150, 95, 230)), 1);
     private static readonly Pen GridPen =new(new SolidColorBrush(Color.FromArgb(28, 255, 255, 255)), 1);
     private static readonly Typeface UiTypeface = new("Inter");
@@ -252,6 +253,15 @@ public sealed class DopeSheet : Control
         // Event markers: a flag on the ruler and a faint line through the rows.
         using (context.PushClip(new Rect(LabelWidth, 0, Math.Max(0, Bounds.Width - LabelWidth), Bounds.Height)))
         {
+            // Particle effects: a thin bar under the ruler from when they start to when the last particle fades.
+            foreach (var effect in doc.Root.Particles)
+            {
+                var x0 = FrameToX(effect.StartFrame);
+                var x1 = Math.Max(x0 + 4, FrameToX(effect.EndFrame(doc.Animation.Fps)));
+                context.DrawRectangle(ParticleBrush, null, new Rect(x0, RulerHeight - 3, x1 - x0, 3), 1.5, 1.5);
+                context.DrawRectangle(ParticleBrush, null, new Rect(x0 - 1, RulerHeight - 7, 3, 7));
+            }
+
             foreach (var animEvent in doc.Animation.Events)
             {
                 var x = FrameToX(animEvent.Frame);

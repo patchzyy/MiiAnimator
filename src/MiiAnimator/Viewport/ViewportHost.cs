@@ -77,14 +77,25 @@ public sealed class ViewportHost : Panel
         prewarm.Tick += (_, _) =>
         {
             prewarm.Stop();
-            heads.Prewarm(document.StudioData);
+            foreach (var studio in ActorStudios())
+                heads.Prewarm(studio);
         };
         document.MiiChanged += () =>
         {
-            _gl.RetainHeads(heads.Retain(document.StudioData));
+            _gl.RetainHeads(heads.Retain(ActorStudios()));
             prewarm.Stop();
             prewarm.Start();
             Refresh();
+        };
+        document.AnimationChanged += () =>
+        {
+            // Adding an actor brings a new Mii; build its heads too.
+            if (_knownActorCount != document.Root.ActorCount)
+            {
+                _knownActorCount = document.Root.ActorCount;
+                prewarm.Stop();
+                prewarm.Start();
+            }
         };
         heads.HeadReady += Refresh;
         heads.Prewarm(document.StudioData);
@@ -106,6 +117,39 @@ public sealed class ViewportHost : Panel
     // ---------- Scene ----------
 
     private Vector3 RenderScale => (_document?.BodyScale ?? Vector3.One) * MiiBodyModel.CanonicalToRenderUnits;
+
+    private int _knownActorCount = 1;
+
+    private IEnumerable<string> ActorStudios() =>
+        Enumerable.Range(0, _document!.Root.ActorCount).Select(_document.ActorStudioData).Where(s => s.Length > 0).Distinct();
+
+    /// <summary>The animation's other Miis (everyone but the one being edited), drawn without handles.</summary>
+    private List<MiiDrawItem> OtherActors(AnimatorDocument doc)
+    {
+        var items = new List<MiiDrawItem>();
+        for (var actor = 0; actor < doc.Root.ActorCount; actor++)
+        {
+            if (actor == doc.ActiveActor)
+                continue;
+            var mii = doc.ActorMii(actor);
+            var pose = doc.EvaluateActorPose(actor, doc.DisplayFrame);
+            var head = HeadFor(doc.ActorStudioData(actor), pose.Expression);
+            items.Add(
+                new MiiDrawItem(
+                    pose,
+                    head.Data,
+                    head.Key,
+                    Vector4.Zero,
+                    1f,
+                    Body: doc.RigFor(mii).Body,
+                    BodyScale: AnimatorDocument.BodyScaleOf(mii),
+                    BodyColor: NativeMiiRenderer.FavoriteColor((int)mii.MiiFavoriteColor)
+                )
+            );
+        }
+
+        return items;
+    }
 
     public void Refresh()
     {
@@ -145,6 +189,8 @@ public sealed class ViewportHost : Panel
                 doc.IsPlaying ? 0 : doc.Selection.HighlightMask,
                 doc.IsPlaying ? 0 : _hoverMask
             ),
+            Others = OtherActors(doc),
+            Particles = doc.EvaluateParticles(doc.DisplayFrame),
             Ghosts = ghosts,
             Scene = doc.Scene,
             CameraPosition = _camera.Position,
@@ -161,9 +207,10 @@ public sealed class ViewportHost : Panel
         return new MiiDrawItem(pose, head.Data, head.Key, tint, 0.28f);
     }
 
-    private (IReadOnlyList<HeadMeshData>? Data, string? Key) HeadFor(MiiExpression expression)
+    private (IReadOnlyList<HeadMeshData>? Data, string? Key) HeadFor(MiiExpression expression) => HeadFor(_document!.StudioData, expression);
+
+    private (IReadOnlyList<HeadMeshData>? Data, string? Key) HeadFor(string studio, MiiExpression expression)
     {
-        var studio = _document!.StudioData;
         var head = _heads!.Get(studio, expression);
         if (head is not null)
             return (head, HeadModelCache.Key(studio, expression));
@@ -188,7 +235,8 @@ public sealed class ViewportHost : Panel
 
     private sealed record Drag(Handle Handle, Point Start, Vector3 Center, Quaternion StartRotation, Quaternion ParentRotation, Vector3 Axis, float StartAngle, float[] StartValues, Vector3 PreviousEuler);
 
-    private Vector3 ToRender(Vector3 canonicalCharacterSpace) => canonicalCharacterSpace * RenderScale;
+    private Vector3 ToRender(Vector3 canonicalCharacterSpace) =>
+        _pose is null ? canonicalCharacterSpace * RenderScale : Vector3.Transform(canonicalCharacterSpace, MiiStage.BodyToStage(_pose, _document!.BodyScale));
 
     private Vector3 BonePosition(MiiBone bone) => ToRender(_pose!.WorldPositionOf(bone));
 
@@ -346,7 +394,7 @@ public sealed class ViewportHost : Panel
         if (_document is null || _pose is null)
             return null;
         var (origin, direction) = _camera.Ray(new Vector2((float)point.X, (float)point.Y), (float)Bounds.Width, (float)Bounds.Height);
-        var renderScale = Matrix4x4.CreateScale(RenderScale);
+        var renderScale = MiiStage.BodyToStage(_pose, _document.BodyScale);
         var bestT = float.MaxValue;
         MiiBone? best = null;
 
@@ -380,7 +428,7 @@ public sealed class ViewportHost : Panel
         var head = _heads?.Get(_document.StudioData, _pose.Expression) ?? _heads?.Get(_document.StudioData, MiiExpression.Normal);
         if (head is not null)
         {
-            var headMatrix = _pose.HeadMatrixForRender(_document.BodyScale);
+            var headMatrix = MiiStage.HeadToStage(_pose, _document.BodyScale);
             // Some FFL draw calls (masks/overlays) extend below the face; only count hits above the neck.
             var neck = BonePosition(MiiBone.Head);
             var up = Vector3.Normalize(Vector3.Transform(Vector3.UnitY, _pose.WorldRotation[(int)MiiBone.Head]));
@@ -649,7 +697,11 @@ public sealed class ViewportHost : Panel
             case HandleKind.Move:
             {
                 var moved = _camera.DragInViewPlane(drag.Center, pixel, w, h);
-                var deltaCanonical = (moved - drag.Center) / RenderScale / _pose!.LocalScale[(int)MiiBone.Root];
+                // Root travel is drawn at the average Mii's scale (see MiiStage), so it follows the pointer exactly.
+                var travelScale = selection.Bone == MiiBone.Root
+                    ? new Vector3(MiiStage.DefaultBodyScale.X, _document!.BodyScale.Y, MiiStage.DefaultBodyScale.Z) * MiiBodyModel.CanonicalToRenderUnits
+                    : RenderScale;
+                var deltaCanonical = (moved - drag.Center) / travelScale / _pose!.LocalScale[(int)MiiBone.Root];
                 if (selection.Bone == MiiBone.Hip)
                     deltaCanonical = Vector3.Transform(deltaCanonical, Quaternion.Inverse(_pose.WorldRotation[(int)MiiBone.Root]));
                 doc.SetValues(

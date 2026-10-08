@@ -1,0 +1,2255 @@
+{
+  "format": "miianim",
+  "clips": [
+    {
+      "path": "editor/body_shape/Body_shape_stretch.miianim",
+      "name": "Body shape stretch",
+      "fps": 60,
+      "frames": 166,
+      "seconds": 2.7666667,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 64,
+          "name": "body_visible"
+        },
+        {
+          "frame": 166,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/body_shape/Body_shape_width_check.miianim",
+      "name": "Body shape width check",
+      "fps": 60,
+      "frames": 174,
+      "seconds": 2.9,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 94,
+          "name": "body_visible"
+        },
+        {
+          "frame": 174,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/enter/Editor_enter_ready.miianim",
+      "name": "Editor enter ready",
+      "fps": 60,
+      "frames": 144,
+      "seconds": 2.4,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 80,
+          "name": "ready"
+        },
+        {
+          "frame": 144,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/enter/Editor_enter_wave.miianim",
+      "name": "Editor enter wave",
+      "fps": 60,
+      "frames": 174,
+      "seconds": 2.9,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 70,
+          "name": "arrived"
+        },
+        {
+          "frame": 174,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/eyes_eyebrows/Eyes_eyebrows_blink_test.miianim",
+      "name": "Eyes eyebrows blink test",
+      "fps": 60,
+      "frames": 144,
+      "seconds": 2.4,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 104,
+          "name": "feature_visible"
+        },
+        {
+          "frame": 144,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/eyes_eyebrows/Eyes_eyebrows_wink_upper.miianim",
+      "name": "Eyes eyebrows wink upper",
+      "fps": 60,
+      "frames": 132,
+      "seconds": 2.2,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 98,
+          "name": "feature_visible"
+        },
+        {
+          "frame": 132,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/face/Face_angle_check.miianim",
+      "name": "Face angle check",
+      "fps": 60,
+      "frames": 174,
+      "seconds": 2.9,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 148,
+          "name": "feature_visible"
+        },
+        {
+          "frame": 174,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/face/Face_portrait_upper.miianim",
+      "name": "Face portrait upper",
+      "fps": 60,
+      "frames": 156,
+      "seconds": 2.6,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 138,
+          "name": "feature_visible"
+        },
+        {
+          "frame": 156,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/facial_hair/Facial_hair_inspect_upper.miianim",
+      "name": "Facial hair inspect upper",
+      "fps": 60,
+      "frames": 144,
+      "seconds": 2.4,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 108,
+          "name": "feature_visible"
+        },
+        {
+          "frame": 144,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/facial_hair/Facial_hair_proud_chin.miianim",
+      "name": "Facial hair proud chin",
+      "fps": 60,
+      "frames": 174,
+      "seconds": 2.9,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 116,
+          "name": "feature_visible"
+        },
+        {
+          "frame": 174,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/favorite/Favorite_removed.miianim",
+      "name": "Favorite removed",
+      "fps": 60,
+      "frames": 150,
+      "seconds": 2.5,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 20,
+          "name": "favorite_removed"
+        },
+        {
+          "frame": 150,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 3
+    },
+    {
+      "path": "editor/favorite/Favorite_removed_stomp.miianim",
+      "name": "Favorite removed stomp",
+      "fps": 60,
+      "frames": 162,
+      "seconds": 2.7,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 12,
+          "name": "favorite_removed"
+        },
+        {
+          "frame": 18,
+          "name": "anticipate"
+        },
+        {
+          "frame": 36,
+          "name": "stomp_lift"
+        },
+        {
+          "frame": 42,
+          "name": "stomp"
+        },
+        {
+          "frame": 162,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 4
+    },
+    {
+      "path": "editor/favorite/Favorite_selected.miianim",
+      "name": "Favorite selected",
+      "fps": 60,
+      "frames": 168,
+      "seconds": 2.8,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 42,
+          "name": "favorite_selected"
+        },
+        {
+          "frame": 168,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/favoritecolor/Shirt_color_compare.miianim",
+      "name": "Shirt color compare",
+      "fps": 60,
+      "frames": 222,
+      "seconds": 3.7,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 30,
+          "name": "left_sleeve"
+        },
+        {
+          "frame": 66,
+          "name": "left_sleeve_end"
+        },
+        {
+          "frame": 108,
+          "name": "right_sleeve"
+        },
+        {
+          "frame": 144,
+          "name": "right_sleeve_end"
+        },
+        {
+          "frame": 168,
+          "name": "color_visible"
+        },
+        {
+          "frame": 222,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/favoritecolor/Shirt_color_present.miianim",
+      "name": "Shirt color present",
+      "fps": 60,
+      "frames": 168,
+      "seconds": 2.8,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 72,
+          "name": "color_visible"
+        },
+        {
+          "frame": 168,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 1
+    },
+    {
+      "path": "editor/favoritecolor/Shirt_color_surprise.miianim",
+      "name": "Shirt color surprise",
+      "fps": 60,
+      "frames": 210,
+      "seconds": 3.5,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 210,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 1
+    },
+    {
+      "path": "editor/gender/Become_boy.miianim",
+      "name": "Become boy",
+      "fps": 60,
+      "frames": 230,
+      "seconds": 3.8333333,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 16,
+          "name": "stomp"
+        },
+        {
+          "frame": 25,
+          "name": "swap_gender"
+        },
+        {
+          "frame": 230,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/gender/Become_girl.miianim",
+      "name": "Become girl",
+      "fps": 60,
+      "frames": 190,
+      "seconds": 3.1666667,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 12,
+          "name": "jump"
+        },
+        {
+          "frame": 24,
+          "name": "swap_gender"
+        },
+        {
+          "frame": 36,
+          "name": "landed"
+        },
+        {
+          "frame": 190,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/glasses/Glasses_focus_upper.miianim",
+      "name": "Glasses focus upper",
+      "fps": 60,
+      "frames": 212,
+      "seconds": 3.5333333,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 148,
+          "name": "feature_visible"
+        },
+        {
+          "frame": 212,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/glasses/Glasses_look_over.miianim",
+      "name": "Glasses look over",
+      "fps": 60,
+      "frames": 164,
+      "seconds": 2.7333333,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 142,
+          "name": "feature_visible"
+        },
+        {
+          "frame": 164,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/hair/Hair_inspect_upper.miianim",
+      "name": "Hair inspect upper",
+      "fps": 60,
+      "frames": 156,
+      "seconds": 2.6,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 136,
+          "name": "feature_visible"
+        },
+        {
+          "frame": 156,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/hair/Hair_swish.miianim",
+      "name": "Haircut inspection",
+      "fps": 60,
+      "frames": 216,
+      "seconds": 3.6,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 198,
+          "name": "feature_visible"
+        },
+        {
+          "frame": 216,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/idle/Editor_idle_attentive_upper.miianim",
+      "name": "Editor idle attentive upper",
+      "fps": 60,
+      "frames": 660,
+      "seconds": 11,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/idle/Editor_idle_calm_breathing.miianim",
+      "name": "Editor idle calm breathing",
+      "fps": 60,
+      "frames": 720,
+      "seconds": 12,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/idle/Editor_idle_curious_tilt_upper.miianim",
+      "name": "Editor idle curious tilt upper",
+      "fps": 60,
+      "frames": 840,
+      "seconds": 14,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/idle/Editor_idle_downward_glance_upper.miianim",
+      "name": "Editor idle downward glance upper",
+      "fps": 60,
+      "frames": 720,
+      "seconds": 12,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/idle/Editor_idle_glance_left_upper.miianim",
+      "name": "Editor idle glance left upper",
+      "fps": 60,
+      "frames": 780,
+      "seconds": 13,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/idle/Editor_idle_glance_right_upper.miianim",
+      "name": "Editor idle glance right upper",
+      "fps": 60,
+      "frames": 720,
+      "seconds": 12,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/idle/Editor_idle_hands_settle.miianim",
+      "name": "Editor idle hands settle",
+      "fps": 60,
+      "frames": 660,
+      "seconds": 11,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/idle/Editor_idle_look_between_upper.miianim",
+      "name": "Editor idle look between upper",
+      "fps": 60,
+      "frames": 960,
+      "seconds": 16,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/idle/Editor_idle_loose_arm.miianim",
+      "name": "Editor idle loose arm",
+      "fps": 60,
+      "frames": 900,
+      "seconds": 15,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/idle/Editor_idle_neck_settle_upper.miianim",
+      "name": "Editor idle neck settle upper",
+      "fps": 60,
+      "frames": 780,
+      "seconds": 13,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/idle/Editor_idle_quiet_nod_upper.miianim",
+      "name": "Editor idle quiet nod upper",
+      "fps": 60,
+      "frames": 600,
+      "seconds": 10,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/idle/Editor_idle_quiet_palm.miianim",
+      "name": "Editor idle quiet palm",
+      "fps": 60,
+      "frames": 720,
+      "seconds": 12,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/idle/Editor_idle_relaxed_listen_upper.miianim",
+      "name": "Editor idle relaxed listen upper",
+      "fps": 60,
+      "frames": 840,
+      "seconds": 14,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/idle/Editor_idle_relaxed_shoulders.miianim",
+      "name": "Editor idle relaxed shoulders",
+      "fps": 60,
+      "frames": 720,
+      "seconds": 12,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/idle/Editor_idle_sleeve_glance.miianim",
+      "name": "Editor idle sleeve glance",
+      "fps": 60,
+      "frames": 780,
+      "seconds": 13,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/idle/Editor_idle_slow_sway.miianim",
+      "name": "Editor idle slow sway",
+      "fps": 60,
+      "frames": 960,
+      "seconds": 16,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/idle/Editor_idle_thoughtful_pause.miianim",
+      "name": "Editor idle thoughtful pause",
+      "fps": 60,
+      "frames": 840,
+      "seconds": 14,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/idle/Editor_idle_upward_thought_upper.miianim",
+      "name": "Editor idle upward thought upper",
+      "fps": 60,
+      "frames": 900,
+      "seconds": 15,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/idle/Editor_idle_weight_left.miianim",
+      "name": "Editor idle weight left",
+      "fps": 60,
+      "frames": 840,
+      "seconds": 14,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/idle/Editor_idle_weight_right.miianim",
+      "name": "Editor idle weight right",
+      "fps": 60,
+      "frames": 780,
+      "seconds": 13,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/interactions/flinch/Flinch_body.miianim",
+      "name": "Flinch body",
+      "fps": 60,
+      "frames": 144,
+      "seconds": 2.4,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 0,
+          "name": "click"
+        },
+        {
+          "frame": 8,
+          "name": "recoil"
+        },
+        {
+          "frame": 144,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/interactions/flinch/Flinch_head.miianim",
+      "name": "Flinch head",
+      "fps": 60,
+      "frames": 126,
+      "seconds": 2.1,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 0,
+          "name": "click"
+        },
+        {
+          "frame": 6,
+          "name": "recoil"
+        },
+        {
+          "frame": 126,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/interactions/flinch/Flinch_left_leg.miianim",
+      "name": "Flinch left leg",
+      "fps": 60,
+      "frames": 150,
+      "seconds": 2.5,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 0,
+          "name": "click"
+        },
+        {
+          "frame": 8,
+          "name": "recoil"
+        },
+        {
+          "frame": 36,
+          "name": "foot_down"
+        },
+        {
+          "frame": 150,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/interactions/flinch/Flinch_right_leg.miianim",
+      "name": "Flinch right leg",
+      "fps": 60,
+      "frames": 150,
+      "seconds": 2.5,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 0,
+          "name": "click"
+        },
+        {
+          "frame": 8,
+          "name": "recoil"
+        },
+        {
+          "frame": 36,
+          "name": "foot_down"
+        },
+        {
+          "frame": 150,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/interactions/front_click/Front_click_mock_scold.miianim",
+      "name": "Front click mock scold",
+      "fps": 60,
+      "frames": 216,
+      "seconds": 3.6,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 0,
+          "name": "click"
+        },
+        {
+          "frame": 10,
+          "name": "react"
+        },
+        {
+          "frame": 42,
+          "name": "palm_up"
+        },
+        {
+          "frame": 216,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/interactions/front_click/Front_click_playful_dodge.miianim",
+      "name": "Front click playful dodge",
+      "fps": 60,
+      "frames": 192,
+      "seconds": 3.2,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 0,
+          "name": "click"
+        },
+        {
+          "frame": 14,
+          "name": "dodge"
+        },
+        {
+          "frame": 68,
+          "name": "peek"
+        },
+        {
+          "frame": 192,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/interactions/front_click/Front_click_ticklish_shrug.miianim",
+      "name": "Front click ticklish shrug",
+      "fps": 60,
+      "frames": 180,
+      "seconds": 3,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 0,
+          "name": "click"
+        },
+        {
+          "frame": 8,
+          "name": "react"
+        },
+        {
+          "frame": 34,
+          "name": "shrug"
+        },
+        {
+          "frame": 180,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/mole/Mole_cheek_reveal.miianim",
+      "name": "Mole cheek reveal",
+      "fps": 60,
+      "frames": 180,
+      "seconds": 3,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 142,
+          "name": "feature_visible"
+        },
+        {
+          "frame": 180,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/mole/Mole_find_upper.miianim",
+      "name": "Mole find upper",
+      "fps": 60,
+      "frames": 144,
+      "seconds": 2.4,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 112,
+          "name": "feature_visible"
+        },
+        {
+          "frame": 144,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/mouth/Mouth_say_hello.miianim",
+      "name": "Mouth angle inspection",
+      "fps": 60,
+      "frames": 144,
+      "seconds": 2.4,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 124,
+          "name": "feature_visible"
+        },
+        {
+          "frame": 144,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/mouth/Mouth_smile_test_upper.miianim",
+      "name": "Mouth close inspection",
+      "fps": 60,
+      "frames": 132,
+      "seconds": 2.2,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 110,
+          "name": "feature_visible"
+        },
+        {
+          "frame": 132,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/name/Name_introduction.miianim",
+      "name": "Name introduction",
+      "fps": 60,
+      "frames": 150,
+      "seconds": 2.5,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 28,
+          "name": "name_visible"
+        },
+        {
+          "frame": 150,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/name/Name_thinking.miianim",
+      "name": "Name thinking",
+      "fps": 60,
+      "frames": 180,
+      "seconds": 3,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 128,
+          "name": "name_decided"
+        },
+        {
+          "frame": 180,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/nose/Nose_profile_check.miianim",
+      "name": "Nose profile check",
+      "fps": 60,
+      "frames": 180,
+      "seconds": 3,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 150,
+          "name": "feature_visible"
+        },
+        {
+          "frame": 180,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/nose/Nose_sniff_upper.miianim",
+      "name": "Nose sniff upper",
+      "fps": 60,
+      "frames": 132,
+      "seconds": 2.2,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 100,
+          "name": "feature_visible"
+        },
+        {
+          "frame": 132,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/randomize/Randomize_reveal.miianim",
+      "name": "Randomize reveal",
+      "fps": 60,
+      "frames": 162,
+      "seconds": 2.7,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 36,
+          "name": "randomize"
+        },
+        {
+          "frame": 60,
+          "name": "reveal"
+        },
+        {
+          "frame": 162,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 2
+    },
+    {
+      "path": "editor/randomize/Randomize_shuffle.miianim",
+      "name": "Randomize shuffle",
+      "fps": 60,
+      "frames": 192,
+      "seconds": 3.2,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 52,
+          "name": "randomize"
+        },
+        {
+          "frame": 110,
+          "name": "reveal"
+        },
+        {
+          "frame": 192,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/save/Save_proud_bow.miianim",
+      "name": "Save proud bow",
+      "fps": 60,
+      "frames": 174,
+      "seconds": 2.9,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 84,
+          "name": "saved"
+        },
+        {
+          "frame": 174,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "editor/save/Save_relief.miianim",
+      "name": "Save relief",
+      "fps": 60,
+      "frames": 144,
+      "seconds": 2.4,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 94,
+          "name": "saved"
+        },
+        {
+          "frame": 144,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "friends/offline/Friends_became_offline.miianim",
+      "name": "Friends became offline",
+      "fps": 60,
+      "frames": 192,
+      "seconds": 3.2,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 70,
+          "name": "offline"
+        },
+        {
+          "frame": 192,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "friends/offline/Friends_offline_idle_restful.miianim",
+      "name": "Friends offline idle restful",
+      "fps": 60,
+      "frames": 420,
+      "seconds": 7,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "friends/offline/Friends_offline_idle_thoughtful.miianim",
+      "name": "Friends offline idle thoughtful",
+      "fps": 60,
+      "frames": 480,
+      "seconds": 8,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "friends/online/Friends_became_online.miianim",
+      "name": "Friends became online",
+      "fps": 60,
+      "frames": 156,
+      "seconds": 2.6,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 24,
+          "name": "online"
+        },
+        {
+          "frame": 156,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "friends/online/Friends_online_idle_amused.miianim",
+      "name": "Friends online idle amused",
+      "fps": 60,
+      "frames": 420,
+      "seconds": 7,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "friends/online/Friends_online_idle_attentive.miianim",
+      "name": "Friends online idle attentive",
+      "fps": 60,
+      "frames": 360,
+      "seconds": 6,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "leaderboard/first_place/First_place_high_fives.miianim",
+      "name": "First place: high fives",
+      "fps": 60,
+      "frames": 1440,
+      "seconds": 24,
+      "actorCount": 3,
+      "extraActorRoles": [
+        "second",
+        "third"
+      ],
+      "events": [
+        {
+          "frame": 432,
+          "name": "silver_high_five"
+        },
+        {
+          "frame": 792,
+          "name": "bronze_low_five"
+        },
+        {
+          "frame": 900,
+          "name": "idle"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "leaderboard/second_place/Second_place_conductor.miianim",
+      "name": "Second place: conductor",
+      "fps": 60,
+      "frames": 1560,
+      "seconds": 26,
+      "actorCount": 3,
+      "extraActorRoles": [
+        "second",
+        "third"
+      ],
+      "events": [
+        {
+          "frame": 466,
+          "name": "gold_bow"
+        },
+        {
+          "frame": 594,
+          "name": "bronze_bow"
+        },
+        {
+          "frame": 1070,
+          "name": "silver_bow"
+        },
+        {
+          "frame": 1200,
+          "name": "idle"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "leaderboard/third_place/Third_place_copycat.miianim",
+      "name": "Third place: copycat",
+      "fps": 60,
+      "frames": 1680,
+      "seconds": 28,
+      "actorCount": 3,
+      "extraActorRoles": [
+        "second",
+        "third"
+      ],
+      "events": [
+        {
+          "frame": 390,
+          "name": "bronze_starts"
+        },
+        {
+          "frame": 438,
+          "name": "gold_copies"
+        },
+        {
+          "frame": 486,
+          "name": "silver_copies"
+        },
+        {
+          "frame": 1100,
+          "name": "bronze_freezes"
+        },
+        {
+          "frame": 1290,
+          "name": "idle"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "library/favorite/Favorite_delighted_wink.miianim",
+      "name": "Favorite delighted wink",
+      "fps": 60,
+      "frames": 78,
+      "seconds": 1.3,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 20,
+          "name": "favorite_ack"
+        },
+        {
+          "frame": 78,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "library/favorite/Favorite_grateful_nod.miianim",
+      "name": "Favorite grateful nod",
+      "fps": 60,
+      "frames": 90,
+      "seconds": 1.5,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 14,
+          "name": "favorite_ack"
+        },
+        {
+          "frame": 90,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "library/favorite/Favorite_shy_smile.miianim",
+      "name": "Favorite shy smile",
+      "fps": 60,
+      "frames": 102,
+      "seconds": 1.7,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 18,
+          "name": "favorite_ack"
+        },
+        {
+          "frame": 102,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "library/favorite/Unfavorite_curious_blink.miianim",
+      "name": "Unfavorite curious blink",
+      "fps": 60,
+      "frames": 84,
+      "seconds": 1.4,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 18,
+          "name": "unfavorite_ack"
+        },
+        {
+          "frame": 84,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "library/favorite/Unfavorite_soft_nod.miianim",
+      "name": "Unfavorite soft nod",
+      "fps": 60,
+      "frames": 72,
+      "seconds": 1.2,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 13,
+          "name": "unfavorite_ack"
+        },
+        {
+          "frame": 72,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "library/hover/Hover_enter_bright.miianim",
+      "name": "Hover enter bright",
+      "fps": 60,
+      "frames": 36,
+      "seconds": 0.6,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 36,
+          "name": "hover_ready"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "library/hover/Hover_enter_curious.miianim",
+      "name": "Hover enter curious",
+      "fps": 60,
+      "frames": 36,
+      "seconds": 0.6,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 36,
+          "name": "hover_ready"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "library/hover/Hover_idle_bright.miianim",
+      "name": "Hover idle bright",
+      "fps": 60,
+      "frames": 240,
+      "seconds": 4,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "library/hover/Hover_idle_curious.miianim",
+      "name": "Hover idle curious",
+      "fps": 60,
+      "frames": 240,
+      "seconds": 4,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "library/hover/Hover_leave_bright.miianim",
+      "name": "Hover leave bright",
+      "fps": 60,
+      "frames": 30,
+      "seconds": 0.5,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 30,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "library/hover/Hover_leave_curious.miianim",
+      "name": "Hover leave curious",
+      "fps": 60,
+      "frames": 30,
+      "seconds": 0.5,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 30,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "profile/change_mii/Change_mii.miianim",
+      "name": "Change Mii",
+      "fps": 60,
+      "frames": 280,
+      "seconds": 4.6666665,
+      "actorCount": 2,
+      "extraActorRoles": [
+        "old"
+      ],
+      "events": [
+        {
+          "frame": 113,
+          "name": "push"
+        },
+        {
+          "frame": 198,
+          "name": "old_gone"
+        },
+        {
+          "frame": 280,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 3
+    },
+    {
+      "path": "profile/make_primary/Make_primary_captain.miianim",
+      "name": "Make primary captain",
+      "fps": 60,
+      "frames": 216,
+      "seconds": 3.6,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 48,
+          "name": "primary"
+        },
+        {
+          "frame": 144,
+          "name": "bow"
+        },
+        {
+          "frame": 216,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "profile/make_primary/Make_primary_proud.miianim",
+      "name": "Make primary proud",
+      "fps": 60,
+      "frames": 192,
+      "seconds": 3.2,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 43,
+          "name": "primary"
+        },
+        {
+          "frame": 97,
+          "name": "acknowledge"
+        },
+        {
+          "frame": 192,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "profile/rename/Rename_delighted.miianim",
+      "name": "Rename delighted",
+      "fps": 60,
+      "frames": 186,
+      "seconds": 3.1,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 25,
+          "name": "noticed"
+        },
+        {
+          "frame": 62,
+          "name": "introduce"
+        },
+        {
+          "frame": 186,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "profile/rename/Rename_introduction.miianim",
+      "name": "Rename introduction",
+      "fps": 60,
+      "frames": 222,
+      "seconds": 3.7,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 31,
+          "name": "bow"
+        },
+        {
+          "frame": 76,
+          "name": "introduce"
+        },
+        {
+          "frame": 222,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "profile/window/funny/Window_double_take.miianim",
+      "name": "Window double take",
+      "fps": 60,
+      "frames": 210,
+      "seconds": 3.5,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 63,
+          "name": "double_take"
+        },
+        {
+          "frame": 97,
+          "name": "shrug"
+        },
+        {
+          "frame": 210,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "profile/window/funny/Window_peek.miianim",
+      "name": "Window peek",
+      "fps": 60,
+      "frames": 280,
+      "seconds": 4.6666665,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 64,
+          "name": "peek"
+        },
+        {
+          "frame": 112,
+          "name": "noticed"
+        },
+        {
+          "frame": 118,
+          "name": "duck"
+        },
+        {
+          "frame": 158,
+          "name": "pop"
+        },
+        {
+          "frame": 194,
+          "name": "wave"
+        },
+        {
+          "frame": 280,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "profile/window/hello/Window_hello_pop.miianim",
+      "name": "Window hello pop",
+      "fps": 60,
+      "frames": 180,
+      "seconds": 3,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 8,
+          "name": "pop"
+        },
+        {
+          "frame": 48,
+          "name": "wave"
+        },
+        {
+          "frame": 180,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "profile/window/hello/Window_hello_slide.miianim",
+      "name": "Window hello slide",
+      "fps": 60,
+      "frames": 220,
+      "seconds": 3.6666667,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 0,
+          "name": "lean_in"
+        },
+        {
+          "frame": 56,
+          "name": "slide"
+        },
+        {
+          "frame": 108,
+          "name": "bow"
+        },
+        {
+          "frame": 146,
+          "name": "wave"
+        },
+        {
+          "frame": 220,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "profile/window/idle/Window_idle_lean.miianim",
+      "name": "Window idle lean",
+      "fps": 60,
+      "frames": 360,
+      "seconds": 6,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "profile/window/idle/Window_idle_sway.miianim",
+      "name": "Window idle sway",
+      "fps": 60,
+      "frames": 300,
+      "seconds": 5,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "rooms/lobby/Lobby_greeting.miianim",
+      "name": "Lobby greeting",
+      "fps": 60,
+      "frames": 192,
+      "seconds": 3.2,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 48,
+          "name": "hello"
+        },
+        {
+          "frame": 192,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "rooms/lobby/Lobby_host_nod.miianim",
+      "name": "Lobby host nod",
+      "fps": 60,
+      "frames": 168,
+      "seconds": 2.8,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 44,
+          "name": "nod"
+        },
+        {
+          "frame": 168,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "rooms/lobby/Lobby_idle_blink.miianim",
+      "name": "Lobby idle blink",
+      "fps": 60,
+      "frames": 480,
+      "seconds": 8,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "rooms/lobby/Lobby_idle_glance_left.miianim",
+      "name": "Lobby idle glance left",
+      "fps": 60,
+      "frames": 600,
+      "seconds": 10,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "rooms/lobby/Lobby_idle_glance_right.miianim",
+      "name": "Lobby idle glance right",
+      "fps": 60,
+      "frames": 600,
+      "seconds": 10,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "rooms/lobby/Lobby_idle_listen.miianim",
+      "name": "Lobby idle listen",
+      "fps": 60,
+      "frames": 540,
+      "seconds": 9,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "rooms/lobby/Lobby_ready_nod.miianim",
+      "name": "Lobby ready nod",
+      "fps": 60,
+      "frames": 156,
+      "seconds": 2.6,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 44,
+          "name": "ready"
+        },
+        {
+          "frame": 156,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "rooms/lobby/Lobby_state_notice.miianim",
+      "name": "Lobby state notice",
+      "fps": 60,
+      "frames": 180,
+      "seconds": 3,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 28,
+          "name": "noticed"
+        },
+        {
+          "frame": 180,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "shared/appear/Appear.miianim",
+      "name": "Appear",
+      "fps": 60,
+      "frames": 150,
+      "seconds": 2.5,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 10,
+          "name": "launch"
+        },
+        {
+          "frame": 32,
+          "name": "clear_of_hole"
+        },
+        {
+          "frame": 60,
+          "name": "landed"
+        },
+        {
+          "frame": 72,
+          "name": "present"
+        },
+        {
+          "frame": 150,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "shared/appear/Appear_balloon.miianim",
+      "name": "Appear balloon",
+      "fps": 60,
+      "frames": 156,
+      "seconds": 2.6,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 8,
+          "name": "appeared"
+        },
+        {
+          "frame": 84,
+          "name": "landed"
+        },
+        {
+          "frame": 108,
+          "name": "hello"
+        },
+        {
+          "frame": 156,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 2
+    },
+    {
+      "path": "shared/disappear/Disappear_balloon_away.miianim",
+      "name": "Disappear balloon away",
+      "fps": 60,
+      "frames": 156,
+      "seconds": 2.6,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 24,
+          "name": "goodbye"
+        },
+        {
+          "frame": 64,
+          "name": "lift_off"
+        },
+        {
+          "frame": 132,
+          "name": "vanished"
+        },
+        {
+          "frame": 156,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 1
+    },
+    {
+      "path": "shared/disappear/Disappear_goodbye_poof.miianim",
+      "name": "Disappear goodbye poof",
+      "fps": 60,
+      "frames": 132,
+      "seconds": 2.2,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 24,
+          "name": "goodbye"
+        },
+        {
+          "frame": 96,
+          "name": "vanished"
+        },
+        {
+          "frame": 132,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 1
+    },
+    {
+      "path": "shared/error/Error_puzzled_shrug.miianim",
+      "name": "Error puzzled shrug",
+      "fps": 60,
+      "frames": 150,
+      "seconds": 2.5,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 42,
+          "name": "shrug"
+        },
+        {
+          "frame": 150,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "shared/error/Error_startled_recovery.miianim",
+      "name": "Error startled recovery",
+      "fps": 60,
+      "frames": 138,
+      "seconds": 2.3,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 8,
+          "name": "startled"
+        },
+        {
+          "frame": 104,
+          "name": "recovered"
+        },
+        {
+          "frame": 138,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "shared/hover/Hover_little_wave.miianim",
+      "name": "Hover little wave",
+      "fps": 60,
+      "frames": 120,
+      "seconds": 2,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 24,
+          "name": "hello"
+        },
+        {
+          "frame": 120,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "shared/hover/Hover_perk_up.miianim",
+      "name": "Hover perk up",
+      "fps": 60,
+      "frames": 90,
+      "seconds": 1.5,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 20,
+          "name": "acknowledged"
+        },
+        {
+          "frame": 90,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "shared/idle/Idle_breathing.miianim",
+      "name": "Idle breathing",
+      "fps": 60,
+      "frames": 360,
+      "seconds": 6,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "shared/idle/Idle_curious_look.miianim",
+      "name": "Idle curious look",
+      "fps": 60,
+      "frames": 360,
+      "seconds": 6,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "shared/idle/Idle_tiny_groove.miianim",
+      "name": "Idle tiny groove",
+      "fps": 60,
+      "frames": 240,
+      "seconds": 4,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "shared/idle/Idle_weight_shift.miianim",
+      "name": "Idle weight shift",
+      "fps": 60,
+      "frames": 420,
+      "seconds": 7,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "shared/loading/Loading_foot_tap.miianim",
+      "name": "Loading foot tap",
+      "fps": 60,
+      "frames": 180,
+      "seconds": 3,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 60,
+          "name": "tap"
+        },
+        {
+          "frame": 88,
+          "name": "tap"
+        },
+        {
+          "frame": 116,
+          "name": "tap"
+        },
+        {
+          "frame": 144,
+          "name": "tap"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "shared/loading/Loading_ponder.miianim",
+      "name": "Loading ponder",
+      "fps": 60,
+      "frames": 240,
+      "seconds": 4,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "shared/selected/Selected_ta_da.miianim",
+      "name": "Selected ta da",
+      "fps": 60,
+      "frames": 150,
+      "seconds": 2.5,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 30,
+          "name": "selected"
+        },
+        {
+          "frame": 36,
+          "name": "present"
+        },
+        {
+          "frame": 150,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 1
+    },
+    {
+      "path": "shared/selected/Selected_yes_nod.miianim",
+      "name": "Selected yes nod",
+      "fps": 60,
+      "frames": 102,
+      "seconds": 1.7,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 22,
+          "name": "selected"
+        },
+        {
+          "frame": 102,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 1
+    },
+    {
+      "path": "shared/success/Success_fist_pump.miianim",
+      "name": "Success fist pump",
+      "fps": 60,
+      "frames": 132,
+      "seconds": 2.2,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 34,
+          "name": "celebrate"
+        },
+        {
+          "frame": 132,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 1
+    },
+    {
+      "path": "shared/success/Success_happy_hop.miianim",
+      "name": "Success happy hop",
+      "fps": 60,
+      "frames": 162,
+      "seconds": 2.7,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 22,
+          "name": "jump"
+        },
+        {
+          "frame": 54,
+          "name": "landed"
+        },
+        {
+          "frame": 80,
+          "name": "celebrate"
+        },
+        {
+          "frame": 162,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 2
+    }
+  ]
+}

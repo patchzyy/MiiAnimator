@@ -7,7 +7,7 @@ using Silk.NET.OpenGL;
 
 namespace MiiAnimator.Viewport;
 
-/// <summary>One Mii to draw: a pose plus how to tint it.</summary>
+/// <summary>One Mii to draw: a pose plus how to tint it. Body, scale and colour default to the frame's.</summary>
 public sealed record MiiDrawItem(
     MiiPose Pose,
     IReadOnlyList<HeadMeshData>? Head,
@@ -15,7 +15,10 @@ public sealed record MiiDrawItem(
     Vector4 Tint,
     float Alpha,
     int HighlightMask = 0,
-    int HoverMask = 0
+    int HoverMask = 0,
+    MiiBodyModel? Body = null,
+    Vector3? BodyScale = null,
+    Vector4? BodyColor = null
 );
 
 public sealed class SceneFrame
@@ -24,6 +27,11 @@ public sealed class SceneFrame
     public required Vector3 BodyScale { get; init; }
     public required Vector4 BodyColor { get; init; }
     public required MiiDrawItem Main { get; init; }
+
+    /// <summary>The animation's other Miis (extra actors, or the main Mii while an actor is being edited).</summary>
+    public IReadOnlyList<MiiDrawItem> Others { get; init; } = [];
+
+    public IReadOnlyList<Particle> Particles { get; init; } = [];
     public IReadOnlyList<MiiDrawItem> Ghosts { get; init; } = [];
     public bool ShowGrid { get; init; } = true;
     public Editing.SceneProps? Scene { get; init; }
@@ -37,6 +45,10 @@ internal sealed unsafe class SceneRenderer : IDisposable
     private readonly uint _headProgram;
     private readonly uint _bodyProgram;
     private readonly uint _lineProgram;
+    private readonly ParticleRenderer? _particles;
+
+    /// <summary>Set when the particle shader couldn't be built; everything else still draws.</summary>
+    public string? ParticleError { get; }
     private readonly Dictionary<string, GpuHead> _heads = new();
     private readonly Dictionary<MiiBodyModel, GpuBody> _bodies = new();
     private uint _gridVao;
@@ -58,6 +70,15 @@ internal sealed unsafe class SceneRenderer : IDisposable
         _headProgram = CreateProgram(header + Shaders.HeadVertex, header + Shaders.HeadFragment);
         _bodyProgram = CreateProgram(header + Shaders.BodyVertex, header + Shaders.BodyFragment);
         _lineProgram = CreateProgram(header + Shaders.LineVertex, header + Shaders.LineFragment);
+        try
+        {
+            _particles = new ParticleRenderer(gl, header);
+        }
+        catch (Exception exception)
+        {
+            ParticleError = exception.Message;
+        }
+
         CreateGrid();
         CreateShadow();
         CreateFloor();
@@ -82,8 +103,11 @@ internal sealed unsafe class SceneRenderer : IDisposable
             DrawGrid(frame, view, projection);
 
         DrawMii(frame, frame.Main, view, projection, depthWrite: true);
+        foreach (var other in frame.Others)
+            DrawMii(frame, other, view, projection, depthWrite: true);
         if (frame.Scene is { ShowWindow: true } scene)
             DrawWindow(frame, scene, view, projection);
+        _particles?.Draw(frame.Particles, Matrix4x4.Identity, view, projection);
 
         // Onion skins: translucent, no depth writes so they never hide the real pose.
         foreach (var ghost in frame.Ghosts)
@@ -97,11 +121,14 @@ internal sealed unsafe class SceneRenderer : IDisposable
 
     private void DrawMii(SceneFrame frame, MiiDrawItem item, Matrix4x4 view, Matrix4x4 projection, bool depthWrite)
     {
+        if (!item.Pose.Visible)
+            return;
         _gl.DepthMask(depthWrite);
-        var renderScale = Matrix4x4.CreateScale(frame.BodyScale * MiiBodyModel.CanonicalToRenderUnits);
+        var bodyScale = item.BodyScale ?? frame.BodyScale;
+        var renderScale = MiiStage.BodyToStage(item.Pose, bodyScale);
 
         // Body.
-        var body = GetBody(frame.Body);
+        var body = GetBody(item.Body ?? frame.Body);
         _gl.UseProgram(_bodyProgram);
         SetLighting(_bodyProgram);
         SetMatrix(_bodyProgram, "uView", view);
@@ -122,7 +149,7 @@ internal sealed unsafe class SceneRenderer : IDisposable
         _gl.CullFace(TriangleFace.Back);
         foreach (var mesh in body.Meshes)
         {
-            var color = mesh.IsPants ? NativeMiiRenderer.PantsColor : frame.BodyColor;
+            var color = mesh.IsPants ? NativeMiiRenderer.PantsColor : item.BodyColor ?? frame.BodyColor;
             var material = NativeMiiRenderer.BodyMaterial(mesh.IsPants);
             SetMaterial(_bodyProgram, material.Ambient, material.Diffuse, material.Specular, material.Power, 0, material.Rim);
             SetVec4(_bodyProgram, "uColor", color);
@@ -138,7 +165,7 @@ internal sealed unsafe class SceneRenderer : IDisposable
         SetLighting(_headProgram);
         SetMatrix(_headProgram, "uView", view);
         SetMatrix(_headProgram, "uProj", projection);
-        SetMatrix(_headProgram, "uModel", item.Pose.HeadMatrixForRender(frame.BodyScale));
+        SetMatrix(_headProgram, "uModel", MiiStage.HeadToStage(item.Pose, bodyScale));
         SetVec4(_headProgram, "uTint", item.Tint);
         _gl.Uniform1(_gl.GetUniformLocation(_headProgram, "uAlpha"), item.Alpha);
         _gl.Uniform1(_gl.GetUniformLocation(_headProgram, "uTex"), 0);
@@ -186,15 +213,20 @@ internal sealed unsafe class SceneRenderer : IDisposable
         _gl.BindVertexArray(_gridVao);
         _gl.DrawArrays(PrimitiveType.Lines, 0, (uint)_gridVertexCount);
 
-        // Soft contact shadow under the body, following its ground position.
-        var root = frame.Main.Pose.WorldPositionOf(MiiBone.Root) * frame.BodyScale * MiiBodyModel.CanonicalToRenderUnits;
-        var shadowScale = 1f / (1f + MathF.Max(0f, root.Y - 47f * frame.BodyScale.Y) * 0.02f);
-        var shadowView = Matrix4x4.CreateScale(shadowScale * frame.BodyScale.X, 1f, shadowScale * frame.BodyScale.Z)
-            * Matrix4x4.CreateTranslation(root.X, 0.05f, root.Z)
-            * view;
-        SetMatrix(_lineProgram, "uView", shadowView);
+        // Soft contact shadow under each body, following its ground position.
         _gl.BindVertexArray(_shadowVao);
-        _gl.DrawArrays(PrimitiveType.Triangles, 0, (uint)_shadowVertexCount);
+        foreach (var item in frame.Others.Prepend(frame.Main).Where(i => i.Pose.Visible))
+        {
+            var bodyScale = item.BodyScale ?? frame.BodyScale;
+            var root = Vector3.Transform(item.Pose.WorldPositionOf(MiiBone.Root), MiiStage.BodyToStage(item.Pose, bodyScale));
+            var shadowScale = 1f / (1f + MathF.Max(0f, root.Y - 47f * bodyScale.Y) * 0.02f);
+            var shadowView = Matrix4x4.CreateScale(shadowScale * bodyScale.X, 1f, shadowScale * bodyScale.Z)
+                * Matrix4x4.CreateTranslation(root.X, 0.05f, root.Z)
+                * view;
+            SetMatrix(_lineProgram, "uView", shadowView);
+            _gl.DrawArrays(PrimitiveType.Triangles, 0, (uint)_shadowVertexCount);
+        }
+
         _gl.DepthMask(true);
     }
 
@@ -617,6 +649,7 @@ internal sealed unsafe class SceneRenderer : IDisposable
         _gl.DeleteProgram(_headProgram);
         _gl.DeleteProgram(_bodyProgram);
         _gl.DeleteProgram(_lineProgram);
+        _particles?.Dispose();
     }
 
     private sealed record GpuMesh(uint Vao, uint Vbo, uint Ebo, int IndexCount, uint Texture, HeadMeshData? Data, bool IsPants)

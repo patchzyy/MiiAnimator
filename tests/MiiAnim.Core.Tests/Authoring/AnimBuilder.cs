@@ -9,11 +9,126 @@ namespace MiiAnim.Core.Tests.Authoring;
 /// Small helper for writing animations in code. Arms are posed by hand position (solved with the rig's own IK)
 /// and stored as plain FK rotations, so they follow the body and stay editable in the animator.
 /// </summary>
-public sealed class AnimBuilder(string name, int length, bool female)
+public sealed class AnimBuilder
 {
-    public MiiAnimation Animation { get; } = new() { Name = name, Fps = 60, Length = length };
+    public AnimBuilder(string name, int length, bool female)
+        : this(new MiiAnimation { Name = name, Fps = 60, Length = length }, female) { }
 
-    public MiiRig Rig { get; } = new(MiiBodyModel.Get(female));
+    /// <summary>Builds into an existing animation, e.g. an extra actor's <see cref="AnimActor.Motion"/>.</summary>
+    public AnimBuilder(MiiAnimation target, bool female)
+    {
+        Animation = target;
+        Rig = new MiiRig(MiiBodyModel.Get(female));
+    }
+
+    public MiiAnimation Animation { get; }
+
+    public MiiRig Rig { get; }
+
+    private static readonly TrackId RootX = TrackId.Bone(MiiBone.Root, Channel.PosX);
+    private static readonly TrackId RootY = TrackId.Bone(MiiBone.Root, Channel.PosY);
+    private static readonly TrackId RootYaw = TrackId.Bone(MiiBone.Root, Channel.RotY);
+
+    /// <summary>Where a foot stands when the Mii is at <paramref name="x"/> facing <paramref name="yaw"/> (world, canonical).</summary>
+    public Vector3 NaturalFoot(MiiLimb leg, float x, float yaw, float z = 0f)
+    {
+        var rest = Rig.RestWorldPosition(MiiSkeletonInfo.Chain(leg).End);
+        var rotated = Vector3.Transform(new Vector3(rest.X, 0f, rest.Z), Quaternion.CreateFromAxisAngle(Vector3.UnitY, yaw * MathF.PI / 180f));
+        return new Vector3(x + rotated.X, rest.Y, z + rotated.Z);
+    }
+
+    /// <summary>Puts an IK foot at a world position (canonical), pointing the way the body faces.</summary>
+    public AnimBuilder Foot(MiiLimb leg, int frame, Vector3 world, float yaw, Interpolation interpolation = Interpolation.Smooth)
+    {
+        var offset = world - Rig.RestWorldPosition(MiiSkeletonInfo.Chain(leg).End);
+        Key(Limb(leg, Channel.TargetX), frame, offset.X, interpolation);
+        Key(Limb(leg, Channel.TargetY), frame, offset.Y, interpolation);
+        Key(Limb(leg, Channel.TargetZ), frame, offset.Z, interpolation);
+        Key(Limb(leg, Channel.TargetRotY), frame, yaw, interpolation);
+        return this;
+    }
+
+    public AnimBuilder FeetAt(int frame, float x, float yaw, Interpolation interpolation = Interpolation.Smooth)
+    {
+        Foot(MiiLimb.LegL, frame, NaturalFoot(MiiLimb.LegL, x, yaw), yaw, interpolation);
+        return Foot(MiiLimb.LegR, frame, NaturalFoot(MiiLimb.LegR, x, yaw), yaw, interpolation);
+    }
+
+    /// <summary>
+    /// Walks along X facing <paramref name="yaw"/> with IK feet that stay planted while the body passes over them
+    /// (no sliding). The body moves at a constant speed; key easing before/after yourself. Lowers the hips a little
+    /// so the legs can reach their strides. Returns the frame the last foot lands on.
+    /// </summary>
+    public int WalkX(int from, int to, float fromX, float toX, float yaw, int stepFrames, float lift = 7f, float armSwing = 14f, bool leftFirst = true, float hipDrop = 4f)
+    {
+        // Half steps to start and stop (so the back foot never trails too far), full steps in between.
+        var steps = Math.Max(2, (int)MathF.Round((to - from) / (float)stepFrames) + 1);
+        var full = (to - from) / (float)(steps - 1);
+        int Boundary(int k) => k == 0 ? from : k == steps ? to : from + (int)MathF.Round(full * (k - 0.5f));
+        float BodyX(float frame) => fromX + (toX - fromX) * Math.Clamp((frame - from) / (to - from), 0f, 1f);
+        var speed = (toX - fromX) / (to - from);
+
+        Key(RootX, from, fromX, Interpolation.Linear).Key(RootX, to, toX, Interpolation.Linear);
+        Key(RootYaw, from, yaw).Key(RootYaw, to, yaw);
+
+        var plants = new Dictionary<MiiLimb, Vector3>
+        {
+            [MiiLimb.LegL] = NaturalFoot(MiiLimb.LegL, fromX, yaw),
+            [MiiLimb.LegR] = NaturalFoot(MiiLimb.LegR, fromX, yaw),
+        };
+        foreach (var leg in plants.Keys)
+            Foot(leg, from, plants[leg], yaw);
+
+        for (var k = 0; k < steps; k++)
+        {
+            var start = Boundary(k);
+            var end = Boundary(k + 1);
+            var leg = (k % 2 == 0) == leftFirst ? MiiLimb.LegL : MiiLimb.LegR;
+            var other = leg == MiiLimb.LegL ? MiiLimb.LegR : MiiLimb.LegL;
+            var last = k == steps - 1;
+            // Land half a step ahead of the body (feet together on the last step).
+            var landX = BodyX(end) + (last ? 0f : speed * full * 0.5f);
+            var land = NaturalFoot(leg, landX, yaw);
+            var mid = Vector3.Lerp(plants[leg], land, 0.5f) + new Vector3(0f, lift, 0f);
+            Foot(leg, start, plants[leg], yaw);
+            Foot(leg, (start + end) / 2, mid, yaw);
+            Foot(leg, end, land, yaw);
+            Foot(other, start, plants[other], yaw);
+            Foot(other, end, plants[other], yaw);
+            plants[leg] = land;
+
+            Key(RootY, start, -hipDrop - 0.8f).Key(RootY, (start + end) / 2, -hipDrop + 0.8f);
+            if (armSwing != 0f)
+            {
+                var swing = (leg == MiiLimb.LegL ? 1f : -1f) * (last ? 0f : armSwing);
+                Key(Bone(MiiBone.ArmL1, Channel.RotY), end, swing).Key(Bone(MiiBone.ArmR1, Channel.RotY), end, swing);
+            }
+        }
+
+        Key(RootY, to, -hipDrop * 0.5f);
+        return to;
+    }
+
+    /// <summary>Turns on the spot with two small steps so the legs never twist.</summary>
+    public AnimBuilder TurnInPlace(int from, int to, float x, float yawFrom, float yawTo, float lift = 5f)
+    {
+        Key(RootYaw, from, yawFrom).Key(RootYaw, to, yawTo);
+        var half = (from + to) / 2;
+        var legs = new[] { MiiLimb.LegL, MiiLimb.LegR };
+        var yawMid = (yawFrom + yawTo) / 2f;
+        foreach (var (leg, start, end) in new[] { (legs[0], from, half + 2), (legs[1], half - 2, to) })
+        {
+            var a = NaturalFoot(leg, x, yawFrom);
+            var b = NaturalFoot(leg, x, yawTo);
+            Foot(leg, from, a, yawFrom);
+            Foot(leg, start, a, yawFrom);
+            Foot(leg, (start + end) / 2, Vector3.Lerp(a, b, 0.5f) + new Vector3(0, lift, 0), yawMid);
+            Foot(leg, end, b, yawTo);
+            Foot(leg, to, b, yawTo);
+        }
+
+        return this;
+    }
 
     public static TrackId Bone(MiiBone bone, Channel channel) => TrackId.Bone(bone, channel);
 

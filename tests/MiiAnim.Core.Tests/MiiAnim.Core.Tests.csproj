@@ -16,6 +16,8 @@
     <ItemGroup>
         <Using Include="Xunit" />
         <ProjectReference Include="..\..\src\MiiAnim.Core\MiiAnim.Core.csproj" />
+        <!-- Templates, particle presets and built-in particle shapes live in the animator. -->
+        <ProjectReference Include="..\..\src\MiiAnimator\MiiAnimator.csproj" />
         <None Update="mii_static_body_3ds_male_LE.rmdl" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
 </Project>

@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "animation": "First_place_high_fives.miianim",
+  "podium": "../podium.glb",
+  "fps": 60,
+  "frames": 1440,
+  "looping": true,
+  "coordinates": {
+    "units": "canonical",
+    "up": "\u002BY",
+    "front": "\u002BZ",
+    "canonicalToRender": 0.7,
+    "defaultBodyScale": [
+      0.8325,
+      0.885,
+      0.8325
+    ],
+    "podiumToStageScale": [
+      0.58274996,
+      0.6195,
+      0.58274996
+    ]
+  },
+  "actors": [
+    {
+      "index": 0,
+      "role": "first",
+      "trackBinding": "main",
+      "canonicalPlacement": [
+        0,
+        70,
+        0
+      ],
+      "podiumTop": 70,
+      "rootIdleOffsetY": -2,
+      "runtimeStageOffsetY": "0.7 * podiumTop * (defaultBodyScale.y - actorBodyScale.y)"
+    },
+    {
+      "index": 1,
+      "role": "second",
+      "trackBinding": "extra:second",
+      "canonicalPlacement": [
+        -132,
+        46,
+        0
+      ],
+      "podiumTop": 46,
+      "rootIdleOffsetY": -2,
+      "runtimeStageOffsetY": "0.7 * podiumTop * (defaultBodyScale.y - actorBodyScale.y)"
+    },
+    {
+      "index": 2,
+      "role": "third",
+      "trackBinding": "extra:third",
+      "canonicalPlacement": [
+        132,
+        28,
+        0
+      ],
+      "podiumTop": 28,
+      "rootIdleOffsetY": -2,
+      "runtimeStageOffsetY": "0.7 * podiumTop * (defaultBodyScale.y - actorBodyScale.y)"
+    }
+  ],
+  "events": [
+    {
+      "frame": 432,
+      "name": "silver_high_five"
+    },
+    {
+      "frame": 792,
+      "name": "bronze_low_five"
+    },
+    {
+      "frame": 900,
+      "name": "idle"
+    }
+  ],
+  "contacts": [
+    {
+      "frame": 432,
+      "actors": [
+        0,
+        1
+      ],
+      "limbs": [
+        "ArmR",
+        "ArmL"
+      ],
+      "bones": [
+        "HandR",
+        "HandL"
+      ],
+      "canonicalPoint": [
+        -66,
+        166,
+        8
+      ]
+    },
+    {
+      "frame": 792,
+      "actors": [
+        0,
+        2
+      ],
+      "limbs": [
+        "ArmL",
+        "ArmR"
+      ],
+      "bones": [
+        "HandL",
+        "HandR"
+      ],
+      "canonicalPoint": [
+        66,
+        150,
+        8
+      ]
+    }
+  ],
+  "notes": "Play all three actors together. Miis are supplied by the app. Apply each actor\u0027s runtimeStageOffsetY to its body and head if height differs from the default preview. Root X/Z travel already uses the shared stage scale. For different builds/heights, runtime hand IK can retarget the contact markers; authored FK palm contacts are exact for the default body scale."
+}

@@ -84,10 +84,8 @@ public class WheelWizardAnimationWriter
     [Fact]
     public void WriteWheelWizardAnimations()
     {
-        var dir = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "samples", "wheelwizard");
-        Directory.CreateDirectory(dir);
         foreach (var (name, _, create) in WheelWizardAnimations.All)
-            File.WriteAllBytes(Path.Combine(dir, name + MiiAnimFormat.FileExtension), MiiAnimFormat.Write(create()));
+            WheelWizardSampleWriter.Write(name, create());
     }
 }
 
@@ -128,9 +126,7 @@ public class WindowAnimationTests(ITestOutputHelper output)
     [Fact]
     public void WriteWindowAnimations()
     {
-        var dir = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "samples", "wheelwizard");
-        Directory.CreateDirectory(dir);
         foreach (var (name, create) in WindowAnimations.All)
-            File.WriteAllBytes(Path.Combine(dir, name + MiiAnimFormat.FileExtension), MiiAnimFormat.Write(create()));
+            WheelWizardSampleWriter.Write(name, create());
     }
 }

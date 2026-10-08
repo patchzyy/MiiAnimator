@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 100">
+  <defs>
+    <radialGradient id="streak">
+      <stop offset="0" stop-color="#fff" />
+      <stop offset="0.3" stop-color="#fff" stop-opacity="0.85" />
+      <stop offset="1" stop-color="#fff" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="15" cy="50" rx="15" ry="50" fill="url(#streak)" />
+</svg>

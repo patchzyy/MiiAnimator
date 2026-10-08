@@ -39,6 +39,8 @@ public sealed class MiiGlView : OpenGlControlBase
         {
             var api = GL.GetApi(gl.GetProcAddress);
             _renderer = new SceneRenderer(api, GlVersion.Type == GlProfileType.OpenGLES);
+            if (_renderer.ParticleError is { } particleError)
+                RenderError?.Invoke($"Particles are disabled: {particleError}");
         }
         catch (Exception exception)
         {

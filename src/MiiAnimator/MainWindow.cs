@@ -8,6 +8,7 @@ using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using MiiAnim.Core.Animation;
 using MiiAnim.Core.Format;
+using MiiAnimator.Authoring;
 using MiiAnimator.Editing;
 using MiiAnimator.Panels;
 using MiiAnimator.Timeline;
@@ -27,6 +28,7 @@ public sealed class MainWindow : Window
     private readonly CurveEditor _curveEditor = new();
     private readonly PosePanel _posePanel = new();
     private readonly MiiEditorPanel _miiPanel = new();
+    private readonly ParticlePanel _particlePanel = new();
     private readonly TransportBar _transport;
     private readonly Grid _timelineArea;
     private readonly ToggleButton _advancedToggle;
@@ -56,6 +58,7 @@ public sealed class MainWindow : Window
         _curveEditor.Attach(_doc);
         _posePanel.Attach(_doc);
         _miiPanel.Attach(_doc);
+        _particlePanel.Attach(_doc);
         _transport = new TransportBar(_doc, _dopeSheet);
 
         // ---------- Top bar ----------
@@ -146,13 +149,14 @@ public sealed class MainWindow : Window
                 new TabItem { Header = "Pose", Content = _posePanel, FontSize = 14 },
                 new TabItem { Header = "Mii", Content = _miiPanel, FontSize = 14 },
                 new TabItem { Header = "Animation", Content = animationPanel, FontSize = 14 },
+                new TabItem { Header = "Particles", Content = _particlePanel, FontSize = 14 },
             },
             Padding = new Thickness(0),
         };
         var side = new Border
         {
             Background = new SolidColorBrush(Color.FromRgb(30, 32, 38)),
-            Child = tabs,
+            Child = BuildActorBarAround(tabs),
             BorderBrush = new SolidColorBrush(Color.FromRgb(20, 21, 26)),
             BorderThickness = new Thickness(1, 0, 0, 0),
         };
@@ -281,6 +285,77 @@ public sealed class MainWindow : Window
         ToolTip.SetTip(button, tip);
         button.Click += (_, _) => action();
         return button;
+    }
+
+    /// <summary>
+    /// "Animating: [Mii]" bar above the side tabs. Extra Miis (actors) are animated one at a time; the pose tools,
+    /// timeline and Mii tab all work on the one picked here.
+    /// </summary>
+    private Control BuildActorBarAround(Control tabs)
+    {
+        var picker = new ComboBox { HorizontalAlignment = HorizontalAlignment.Stretch, FontSize = 12.5 };
+        ToolTip.SetTip(picker, "Which Mii you're animating. Every Mii in the animation is drawn; only this one has handles.");
+        var roleBox = new TextBox { FontSize = 12.5, MaxLength = AnimActor.MaxNameLength, Watermark = "role, e.g. old" };
+        ToolTip.SetTip(
+            roleBox,
+            "Role name the app uses to pick a Mii for this actor.\nWheelWizard's change-Mii animation uses \"old\" for the previous Mii."
+        );
+        var add = Small("+", "Add another Mii to this animation", _doc.AddActor);
+        var remove = Small("✕", "Remove this Mii and its animation", () => _doc.RemoveActor(_doc.ActiveActor));
+
+        var updating = false;
+        picker.SelectionChanged += (_, _) =>
+        {
+            if (!updating && picker.SelectedIndex >= 0)
+                _doc.SetActiveActor(picker.SelectedIndex);
+        };
+        void CommitRole() => _doc.RenameActor(_doc.ActiveActor, roleBox.Text ?? "");
+        roleBox.LostFocus += (_, _) => CommitRole();
+        roleBox.KeyDown += (_, e) =>
+        {
+            if (e.Key == Key.Enter)
+                CommitRole();
+        };
+
+        var row = new Grid { ColumnDefinitions = new ColumnDefinitions("Auto,*,Auto,Auto,Auto"), ColumnSpacing = 6, Margin = new Thickness(10, 8, 10, 4) };
+        row.Children.Add(new TextBlock { Text = "Animating", FontSize = 12.5, Foreground = Ui.Muted, VerticalAlignment = VerticalAlignment.Center });
+        Grid.SetColumn(picker, 1);
+        row.Children.Add(picker);
+        Grid.SetColumn(roleBox, 2);
+        roleBox.Width = 96;
+        row.Children.Add(roleBox);
+        Grid.SetColumn(add, 3);
+        row.Children.Add(add);
+        Grid.SetColumn(remove, 4);
+        row.Children.Add(remove);
+
+        var shown = "";
+        void Refresh()
+        {
+            var names = Enumerable.Range(0, _doc.Root.ActorCount).Select(_doc.ActorName).ToList();
+            var signature = string.Join("|", names) + "#" + _doc.ActiveActor;
+            if (signature == shown)
+                return;
+            shown = signature;
+            updating = true;
+            picker.ItemsSource = names;
+            picker.SelectedIndex = _doc.ActiveActor;
+            updating = false;
+            roleBox.IsVisible = remove.IsVisible = _doc.ActiveActor > 0;
+            if (!roleBox.IsFocused)
+                roleBox.Text = _doc.ActiveActor > 0 ? _doc.ActorName(_doc.ActiveActor) : "";
+        }
+
+        _doc.AnimationChanged += Refresh;
+        _doc.FileChanged += Refresh;
+        _doc.MiiChanged += Refresh;
+        Refresh();
+
+        var dock = new DockPanel();
+        DockPanel.SetDock(row, Dock.Top);
+        dock.Children.Add(row);
+        dock.Children.Add(tabs);
+        return dock;
     }
 
     private Control BuildAnimationPanel()

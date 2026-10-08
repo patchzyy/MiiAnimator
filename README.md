@@ -6,10 +6,13 @@ clean timeline (dope sheet + curve editor), and export a compact `.miianim` file
 ## Projects
 
 - `src/MiiAnim.Core` — the `.miianim` format, Mii rig (skinned 3DS body), curves, IK and pose evaluation.
-  WheelWizard contains a copy of this library so playback is identical in both apps.
-- `src/MiiAnimator` — the Avalonia + OpenGL editor.
+  Everything an animation shows is in its file (particle images included); players know no presets or shapes.
+  WheelWizard contains a copy of this library so playback is identical in both apps; edit it here, never there.
+- `src/MiiAnimator` — the Avalonia + OpenGL editor, plus authoring-only helpers: templates, particle presets
+  and the built-in particle images (`Assets/ParticleShapes`).
 - `tests/MiiAnim.Core.Tests` — rig, IK, curve and file format tests.
 - `samples` — the built-in templates exported as `.miianim` files.
+- [`samples/wheelwizard`](samples/wheelwizard/README.md) — WheelWizard clips organized by Mii screen and action, with folders for upcoming animations.
 
 ## Running
 

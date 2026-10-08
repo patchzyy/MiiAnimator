@@ -29,24 +29,34 @@ public sealed class AnimatorDocument
 
     // ---------- State ----------
 
-    public MiiAnimation Animation { get; private set; } = new();
+    /// <summary>The whole file: main Mii, extra actors, events and particles.</summary>
+    public MiiAnimation Root { get; private set; } = new();
+
+    /// <summary>Which Mii is being animated: 0 = main, 1+ = <see cref="MiiAnimation.Actors"/>.</summary>
+    public int ActiveActor { get; private set; }
+
+    /// <summary>The tracks being edited (the active actor's). Timing, events and particles are shared by all actors.</summary>
+    public MiiAnimation Animation => Root.ForActor(ActiveActor);
+
     public string? FilePath { get; private set; }
     public bool IsDirty { get; private set; }
 
+    /// <summary>The active actor's preview Mii (the Mii panel edits this one).</summary>
     public Mii Mii { get; private set; }
     public string StudioData { get; private set; } = "";
 
-    public MiiRig Rig
+    public MiiRig Rig => RigFor(Mii);
+
+    public Vector3 BodyScale => BodyScaleOf(Mii);
+
+    public MiiRig RigFor(Mii mii)
     {
-        get
-        {
-            if (!_rigs.TryGetValue(Mii.IsGirl, out var rig))
-                _rigs[Mii.IsGirl] = rig = new MiiRig(MiiBodyModel.Get(Mii.IsGirl));
-            return rig;
-        }
+        if (!_rigs.TryGetValue(mii.IsGirl, out var rig))
+            _rigs[mii.IsGirl] = rig = new MiiRig(MiiBodyModel.Get(mii.IsGirl));
+        return rig;
     }
 
-    public Vector3 BodyScale => MiiBodyModel.CalculateBodyScale(Mii.Weight.Value, Mii.Height.Value);
+    public static Vector3 BodyScaleOf(Mii mii) => MiiBodyModel.CalculateBodyScale(mii.Weight.Value, mii.Height.Value);
 
     /// <summary>Whole-frame playhead used for editing.</summary>
     public int CurrentFrame { get; private set; }
@@ -182,7 +192,11 @@ public sealed class AnimatorDocument
         to.Push(TakeSnapshot());
         var snapshot = from.Pop();
         var miiChanged = !snapshot.Mii.AsSpan().SequenceEqual(SerializeMii());
-        Animation = snapshot.Animation.Clone();
+        Root = snapshot.Animation.Clone();
+        ActiveActor = Math.Clamp(snapshot.ActiveActor, 0, Root.ActorCount - 1);
+        if (SelectedParticle >= Root.Particles.Count)
+            SelectedParticle = Root.Particles.Count - 1;
+        InvalidateActorCache();
         if (miiChanged)
             SetMiiInternal(MiiSerializer.Deserialize(snapshot.Mii).Value);
         _pending.Clear();
@@ -202,19 +216,21 @@ public sealed class AnimatorDocument
             _undo.Push(items[i]);
     }
 
-    private Snapshot TakeSnapshot() => new(Animation.Clone(), SerializeMii());
+    private Snapshot TakeSnapshot() => new(Root.Clone(), SerializeMii(), ActiveActor);
 
-    private byte[] SerializeMii()
+    private byte[] SerializeMii() => Serialize(Mii);
+
+    private static byte[] Serialize(Mii mii)
     {
-        var result = MiiSerializer.Serialize(Mii);
+        var result = MiiSerializer.Serialize(mii);
         return result.IsSuccess ? result.Value : [];
     }
 
-    private sealed record Snapshot(MiiAnimation Animation, byte[] Mii)
+    private sealed record Snapshot(MiiAnimation Animation, byte[] Mii, int ActiveActor)
     {
         public bool Equals(Snapshot? other)
         {
-            if (other is null || !Mii.AsSpan().SequenceEqual(other.Mii))
+            if (other is null || ActiveActor != other.ActiveActor || !Mii.AsSpan().SequenceEqual(other.Mii))
                 return false;
             return MiiAnimFormat.Write(Animation).AsSpan().SequenceEqual(MiiAnimFormat.Write(other.Animation));
         }
@@ -546,6 +562,174 @@ public sealed class AnimatorDocument
 
     public void SetName(string name) => Edit(() => Animation.Name = string.IsNullOrWhiteSpace(name) ? "Untitled" : name.Trim(), animationChanged: false);
 
+    // ---------- Actors (extra Miis) ----------
+
+    private readonly Dictionary<int, (byte[]? Bytes, Mii Mii, string Studio)> _actorMiis = new();
+
+    /// <summary>Display name of an actor: "Main Mii" or its role name.</summary>
+    public string ActorName(int actor) => actor <= 0 ? "Main Mii" : Root.Actors[actor - 1].Name;
+
+    /// <summary>Preview Mii of any actor (the stored one, or a stand-in until one is set).</summary>
+    public Mii ActorMii(int actor) => ActorEntry(actor).Mii;
+
+    public string ActorStudioData(int actor) => ActorEntry(actor).Studio;
+
+    private (byte[]? Bytes, Mii Mii, string Studio) ActorEntry(int actor)
+    {
+        actor = Math.Clamp(actor, 0, Root.ActorCount - 1);
+        if (actor == ActiveActor)
+            return (null, Mii, StudioData);
+        var bytes = Root.ForActor(actor).AuthorMii;
+        if (_actorMiis.TryGetValue(actor, out var cached) && ReferenceEquals(cached.Bytes, bytes))
+            return cached;
+        var mii = bytes is not null && MiiSerializer.Deserialize(bytes) is { IsSuccess: true } parsed ? parsed.Value : DefaultMii.ForActor(actor);
+        var studio = MiiStudioDataSerializer.Serialize(mii) is { IsSuccess: true } s ? s.Value : "";
+        return _actorMiis[actor] = (bytes, mii, studio);
+    }
+
+    private void InvalidateActorCache() => _actorMiis.Clear();
+
+    /// <summary>Pose of any actor at a frame (keyed values only).</summary>
+    public MiiPose EvaluateActorPose(int actor, float frame) =>
+        actor == ActiveActor ? EvaluatePoseAt(frame) : RigFor(ActorMii(actor)).Evaluate(Root.ForActor(actor), frame);
+
+    /// <summary>Switches which Mii the pose tools, timeline and Mii panel work on.</summary>
+    public void SetActiveActor(int actor)
+    {
+        actor = Math.Clamp(actor, 0, Root.ActorCount - 1);
+        if (actor == ActiveActor)
+            return;
+        var mii = ActorMii(actor);
+        _pending.Clear();
+        ActiveActor = actor;
+        InvalidateActorCache();
+        Mii = mii;
+        RefreshStudioData();
+        Selection = Selection.None;
+        MiiChanged?.Invoke();
+        HeadInvalidated?.Invoke();
+        SelectionChanged?.Invoke();
+        AnimationChanged?.Invoke();
+    }
+
+    /// <summary>Adds an extra Mii (e.g. "old" for WheelWizard's change-Mii animation) and starts animating it.</summary>
+    public void AddActor()
+    {
+        var number = Root.ActorCount;
+        while (Root.FindActor($"mii{number}") > 0)
+            number++;
+        Edit(() =>
+        {
+            var actor = Root.AddActor($"mii{number}");
+            actor.PreviewMii = Serialize(DefaultMii.ForActor(Root.ActorCount - 1)) is { Length: MiiAnimation.MiiDataLength } b ? b : null;
+        });
+        SetActiveActor(Root.ActorCount - 1);
+    }
+
+    public void RenameActor(int actor, string name)
+    {
+        name = name.Trim();
+        if (actor <= 0 || actor >= Root.ActorCount || name.Length == 0 || Root.Actors[actor - 1].Name == name)
+            return;
+        Edit(() => Root.Actors[actor - 1].Name = name.Length > AnimActor.MaxNameLength ? name[..AnimActor.MaxNameLength] : name, animationChanged: false);
+    }
+
+    public void RemoveActor(int actor)
+    {
+        if (actor <= 0 || actor >= Root.ActorCount)
+            return;
+        SetActiveActor(0);
+        Edit(() =>
+        {
+            Root.Actors.RemoveAt(actor - 1);
+            foreach (var effect in Root.Particles)
+            {
+                if (effect.Actor == actor)
+                    effect.Actor = 0;
+                else if (effect.Actor > actor)
+                    effect.Actor--;
+            }
+
+            InvalidateActorCache();
+        });
+    }
+
+    // ---------- Particles ----------
+
+    /// <summary>Particle effect shown in the Particles panel (-1 = none).</summary>
+    public int SelectedParticle { get; private set; } = -1;
+
+    public event Action? ParticleSelectionChanged;
+
+    public void SelectParticle(int index)
+    {
+        index = index >= 0 && index < Root.Particles.Count ? index : -1;
+        if (SelectedParticle == index)
+            return;
+        SelectedParticle = index;
+        ParticleSelectionChanged?.Invoke();
+    }
+
+    /// <summary>Adds a preset effect at the playhead, on the active Mii.</summary>
+    public void AddParticle(ParticleEffect preset)
+    {
+        var effect = preset.Clone();
+        effect.StartFrame = CurrentFrame;
+        effect.Actor = ActiveActor;
+        effect.Seed = (uint)Random.Shared.Next(1, int.MaxValue);
+        Edit(() => Root.Particles.Add(effect));
+        SelectParticle(Root.Particles.Count - 1);
+    }
+
+    /// <summary>Changes one effect (undoable; call inside Begin/EndGesture while dragging a slider).</summary>
+    public void EditParticle(int index, Action<ParticleEffect> change)
+    {
+        if (index < 0 || index >= Root.Particles.Count)
+            return;
+        Edit(() => change(Root.Particles[index]));
+    }
+
+    public void DuplicateParticle(int index)
+    {
+        if (index < 0 || index >= Root.Particles.Count)
+            return;
+        var copy = Root.Particles[index].Clone();
+        copy.Name += " copy";
+        copy.Seed++;
+        Edit(() => Root.Particles.Insert(index + 1, copy));
+        SelectParticle(index + 1);
+    }
+
+    public void RemoveParticle(int index)
+    {
+        if (index < 0 || index >= Root.Particles.Count)
+            return;
+        Edit(() => Root.Particles.RemoveAt(index));
+        SelectParticle(Math.Min(index, Root.Particles.Count - 1));
+    }
+
+    /// <summary>Particles alive on a (fractional) frame, in stage space.</summary>
+    public List<Particle> EvaluateParticles(float frame)
+    {
+        var particles = new List<Particle>();
+        if (Root.Particles.Count == 0)
+            return particles;
+        var stage = new RigParticleStage(
+            Root,
+            actor => RigFor(ActorMii(actor)),
+            actor => BodyScaleOf(ActorMii(actor)),
+            actor => FavoriteColorOf(ActorMii(actor))
+        );
+        ParticleEvaluator.Evaluate(Root, frame, stage, particles, looping: IsPlaying);
+        return particles;
+    }
+
+    public static Vector3 FavoriteColorOf(Mii mii)
+    {
+        var color = MiiData.Rendering.NativeMiiRenderer.FavoriteColor((int)mii.MiiFavoriteColor);
+        return new Vector3(color.X, color.Y, color.Z);
+    }
+
     // ---------- Mii ----------
 
     public event Action? HeadInvalidated;
@@ -563,6 +747,9 @@ public sealed class AnimatorDocument
     private void SetMiiInternal(Mii mii)
     {
         Mii = mii;
+        // Each actor's preview Mii lives in the file, so undo, save and switching actors keep it.
+        Animation.AuthorMii = Serialize(mii) is { Length: MiiAnimation.MiiDataLength } bytes ? bytes : null;
+        InvalidateActorCache();
         RefreshStudioData();
         MiiChanged?.Invoke();
         HeadInvalidated?.Invoke();
@@ -589,7 +776,12 @@ public sealed class AnimatorDocument
 
     public void New(MiiAnimation animation)
     {
-        Animation = animation;
+        Root = animation.Root;
+        ActiveActor = 0;
+        SelectedParticle = -1;
+        InvalidateActorCache();
+        // Keep the current Mii for files without one, so the preview never changes unexpectedly.
+        Root.AuthorMii ??= SerializeMii() is { Length: MiiAnimation.MiiDataLength } bytes ? bytes : null;
         FilePath = null;
         IsDirty = false;
         _undo.Clear();
@@ -603,6 +795,7 @@ public sealed class AnimatorDocument
         FrameChanged?.Invoke();
         SelectionChanged?.Invoke();
         FileChanged?.Invoke();
+        ParticleSelectionChanged?.Invoke();
     }
 
     public void Open(string path)
@@ -623,8 +816,8 @@ public sealed class AnimatorDocument
     public void Save(string path)
     {
         Animation.AuthorMii = SerializeMii() is { Length: MiiAnimation.MiiDataLength } bytes ? bytes : null;
-        Animation.Prune();
-        File.WriteAllBytes(path, MiiAnimFormat.Write(Animation));
+        Root.Prune();
+        File.WriteAllBytes(path, MiiAnimFormat.Write(Root));
         FilePath = path;
         IsDirty = false;
         FileChanged?.Invoke();

@@ -59,10 +59,11 @@ public sealed class HeadModelCache
         return null;
     }
 
-    /// <summary>Drops heads for Miis other than the current one.</summary>
-    public IReadOnlySet<string> Retain(string studioData)
+    /// <summary>Drops heads for Miis other than these (the animation's actors).</summary>
+    public IReadOnlySet<string> Retain(IEnumerable<string> studioData)
     {
-        foreach (var key in _ready.Keys.Where(k => !k.StartsWith(studioData + "|", StringComparison.Ordinal)).ToList())
+        var prefixes = studioData.Select(s => s + "|").ToList();
+        foreach (var key in _ready.Keys.Where(k => !prefixes.Any(p => k.StartsWith(p, StringComparison.Ordinal))).ToList())
             _ready.TryRemove(key, out _);
         return _ready.Keys.ToHashSet();
     }

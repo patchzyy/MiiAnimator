@@ -4,6 +4,7 @@ using MiiAnim.Core.Evaluation;
 using MiiAnim.Core.Format;
 using MiiAnim.Core.Rig;
 using Xunit.Abstractions;
+using MiiAnimator.Authoring;
 
 namespace MiiAnim.Core.Tests;
 
@@ -42,6 +43,43 @@ public class TemplateTests(ITestOutputHelper output)
         Assert.True(hand.X < 0, "right hand is on -X");
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void StandingAnimations_KeepFeetPlantedAndArmsClear(bool female)
+    {
+        var rig = new MiiRig(MiiBodyModel.Get(female));
+        foreach (var animation in new[] { Templates.IdleBreathing(), Templates.IdleWeightShift(), Templates.ShirtColorSurprise() })
+        {
+            var clipping = Authoring.ClipCheck.Describe(Authoring.ClipCheck.Run(animation, female), headLimit: 1f, torsoLimit: 0.8f);
+            Assert.True(clipping.Length == 0, $"{animation.Name}: {clipping}");
+            for (var frame = 0; frame <= animation.Length; frame++)
+            {
+                var pose = rig.Evaluate(animation, frame);
+                foreach (var foot in new[] { MiiBone.FootL, MiiBone.FootR })
+                    Assert.True(Vector3.Distance(pose.WorldPositionOf(foot), rig.RestPose.WorldPositionOf(foot)) < 0.1f,
+                        $"{animation.Name}: {foot} moved at {frame}");
+            }
+            var first = rig.Evaluate(animation, 0);
+            var last = rig.Evaluate(animation, animation.Length);
+            Assert.Equal(first.Expression, last.Expression);
+            foreach (var bone in MiiSkeletonInfo.AllBones)
+                Assert.True(MathF.Abs(Quaternion.Dot(first.WorldRotation[(int)bone], last.WorldRotation[(int)bone])) > 0.99999f);
+        }
+    }
+
+    [Fact]
+    public void ShirtSurprise_LooksDownAtTheShirtThenReturnsToNeutral()
+    {
+        var animation = Templates.ShirtColorSurprise();
+        var inspection = Rig.Evaluate(animation, 60);
+        var forward = Vector3.Normalize(Vector3.TransformNormal(Vector3.UnitZ, inspection.HeadMatrix));
+        Assert.True(forward.Y < -0.5f, "The face should point down toward the shirt.");
+        Assert.Equal(MiiExpression.SurpriseOpenMouth, Rig.Evaluate(animation, 10).Expression);
+        Assert.Equal(MiiExpression.Smile, Rig.Evaluate(animation, 150).Expression);
+        Assert.Equal(MiiExpression.Normal, Rig.Evaluate(animation, animation.Length).Expression);
+    }
+
     [Fact]
     public void Jump_LeavesTheGround()
     {
@@ -75,7 +113,11 @@ public class SampleWriter
         {
             if (name == "Empty")
                 continue;
-            File.WriteAllBytes(Path.Combine(dir, name.Replace(' ', '_') + MiiAnimFormat.FileExtension), MiiAnimFormat.Write(create()));
+            var fileName = name.Replace(' ', '_');
+            var animation = create();
+            File.WriteAllBytes(Path.Combine(dir, fileName + MiiAnimFormat.FileExtension), MiiAnimFormat.Write(animation));
+            if (fileName is "Idle_breathing" or "Idle_weight_shift" or "Shirt_color_surprise")
+                Authoring.WheelWizardSampleWriter.Write(fileName, animation);
         }
     }
 }
