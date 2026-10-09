@@ -142,7 +142,7 @@ public static class FriendsAnimations
         return b.Animation;
     }
 
-    private static AnimBuilder Card(string name, int length)
+    internal static AnimBuilder Card(string name, int length)
     {
         var b = new AnimBuilder(name, length, female: false).FkLegs();
         foreach (var frame in new[] { 0, length })
@@ -161,6 +161,6 @@ public static class FriendsAnimations
         return b;
     }
 
-    private static void Blink(AnimBuilder b, int frame, int duration) =>
+    internal static void Blink(AnimBuilder b, int frame, int duration) =>
         b.Face(frame, MiiExpression.Blink).Face(frame + duration, MiiExpression.Normal);
 }

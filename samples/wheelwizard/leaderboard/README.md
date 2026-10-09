@@ -78,3 +78,13 @@ This bundle targets **AnimatorProgram's current multi-actor `.miianim` format**.
 The source for the three loops is `tests/MiiAnim.Core.Tests/Authoring/LeaderboardAnimations.cs`. The `LeaderboardAnimationTests.WriteLeaderboardSamples` test writes all three `.miianim` files and their `scene.json` sidecars. The other leaderboard tests check serialization, all-frame sole contact, platform bounds, both body meshes, loop closure, quiet gaps, head/body clearance, palm approach/contact/release, and the GLB structure, materials, winding and normals.
 
 To regenerate only the prop and its geometry preview headlessly, run `python samples/wheelwizard/leaderboard/generate_podium.py`. The GLB generator uses the Python standard library; regenerating the optional PNG uses Pillow. Neither is needed for playback.
+
+## Entrances
+
+`enter/first|second|third` hold one single-Mii clip per place, all 4.2 s long, to be started together before a scene:
+bronze drops onto its step first, then silver, then gold lands with a bigger thump and throws its arms up in a burst
+of confetti while the other two turn and clap. Each starts invisible (`Visible` track) high enough above the stage
+for the shortest Miis, falls with FK legs, plants its IK feet on touchdown (with a puff of dust on the step), and ends
+exactly on its actor's first frame of the scenes (which all start the same), so a scene takes over without a seam.
+
+Source: `PodiumEntranceAnimations`.

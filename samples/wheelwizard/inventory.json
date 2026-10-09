@@ -1134,6 +1134,69 @@
       "particleEffects": 0
     },
     {
+      "path": "friends/asleep/Friends_asleep_breathing.miianim",
+      "name": "Friends asleep breathing",
+      "fps": 60,
+      "frames": 480,
+      "seconds": 8,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 1
+    },
+    {
+      "path": "friends/asleep/Friends_asleep_bubble.miianim",
+      "name": "Friends asleep bubble",
+      "fps": 60,
+      "frames": 600,
+      "seconds": 10,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 202,
+          "name": "pop"
+        }
+      ],
+      "particleEffects": 3
+    },
+    {
+      "path": "friends/asleep/Friends_asleep_nodding.miianim",
+      "name": "Friends asleep nodding",
+      "fps": 60,
+      "frames": 540,
+      "seconds": 9,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 266,
+          "name": "startle"
+        }
+      ],
+      "particleEffects": 2
+    },
+    {
+      "path": "friends/doze_off/Friends_doze_off.miianim",
+      "name": "Friends doze off",
+      "fps": 60,
+      "frames": 168,
+      "seconds": 2.8,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 84,
+          "name": "asleep"
+        },
+        {
+          "frame": 168,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 1
+    },
+    {
       "path": "friends/offline/Friends_became_offline.miianim",
       "name": "Friends became offline",
       "fps": 60,
@@ -1216,6 +1279,173 @@
       "extraActorRoles": [],
       "events": [],
       "particleEffects": 0
+    },
+    {
+      "path": "friends/online/Friends_online_idle_curious.miianim",
+      "name": "Friends online idle curious",
+      "fps": 60,
+      "frames": 420,
+      "seconds": 7,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [],
+      "particleEffects": 0
+    },
+    {
+      "path": "friends/online/wave/Friends_wave_excited.miianim",
+      "name": "Friends wave excited",
+      "fps": 60,
+      "frames": 138,
+      "seconds": 2.3,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 20,
+          "name": "wave"
+        },
+        {
+          "frame": 138,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 1
+    },
+    {
+      "path": "friends/online/wave/Friends_wave_hello.miianim",
+      "name": "Friends wave hello",
+      "fps": 60,
+      "frames": 156,
+      "seconds": 2.6,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 26,
+          "name": "wave"
+        },
+        {
+          "frame": 156,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "friends/online/wave/Friends_wave_shy.miianim",
+      "name": "Friends wave shy",
+      "fps": 60,
+      "frames": 174,
+      "seconds": 2.9,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 34,
+          "name": "wave"
+        },
+        {
+          "frame": 174,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "friends/wake_up/Friends_wake_up.miianim",
+      "name": "Friends wake up",
+      "fps": 60,
+      "frames": 120,
+      "seconds": 2,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 38,
+          "name": "awake"
+        },
+        {
+          "frame": 120,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "leaderboard/enter/first/Podium_enter_first.miianim",
+      "name": "Podium enter first",
+      "fps": 60,
+      "frames": 252,
+      "seconds": 4.2,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 58,
+          "name": "drop"
+        },
+        {
+          "frame": 100,
+          "name": "landed"
+        },
+        {
+          "frame": 136,
+          "name": "cheer"
+        },
+        {
+          "frame": 252,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 7
+    },
+    {
+      "path": "leaderboard/enter/second/Podium_enter_second.miianim",
+      "name": "Podium enter second",
+      "fps": 60,
+      "frames": 252,
+      "seconds": 4.2,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 28,
+          "name": "drop"
+        },
+        {
+          "frame": 70,
+          "name": "landed"
+        },
+        {
+          "frame": 252,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 1
+    },
+    {
+      "path": "leaderboard/enter/third/Podium_enter_third.miianim",
+      "name": "Podium enter third",
+      "fps": 60,
+      "frames": 252,
+      "seconds": 4.2,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 4,
+          "name": "drop"
+        },
+        {
+          "frame": 46,
+          "name": "landed"
+        },
+        {
+          "frame": 252,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 1
     },
     {
       "path": "leaderboard/first_place/First_place_high_fives.miianim",
@@ -1565,6 +1795,138 @@
         },
         {
           "frame": 192,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "profile/quick_appear/from_below/Quick_pop_cheer.miianim",
+      "name": "Quick pop cheer",
+      "fps": 60,
+      "frames": 66,
+      "seconds": 1.1,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 14,
+          "name": "up"
+        },
+        {
+          "frame": 17,
+          "name": "cheer"
+        },
+        {
+          "frame": 66,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "profile/quick_appear/from_below/Quick_pop_up.miianim",
+      "name": "Quick pop up",
+      "fps": 60,
+      "frames": 48,
+      "seconds": 0.8,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 13,
+          "name": "up"
+        },
+        {
+          "frame": 48,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "profile/quick_appear/from_left/Quick_slide_from_left.miianim",
+      "name": "Quick slide from left",
+      "fps": 60,
+      "frames": 54,
+      "seconds": 0.9,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 15,
+          "name": "arrive"
+        },
+        {
+          "frame": 54,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "profile/quick_appear/from_right/Quick_slide_from_right.miianim",
+      "name": "Quick slide from right",
+      "fps": 60,
+      "frames": 54,
+      "seconds": 0.9,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 15,
+          "name": "arrive"
+        },
+        {
+          "frame": 54,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "profile/quick_exit/to_below/Quick_drop_down.miianim",
+      "name": "Quick drop down",
+      "fps": 60,
+      "frames": 16,
+      "seconds": 0.26666668,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 16,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "profile/quick_exit/to_left/Quick_slide_to_left.miianim",
+      "name": "Quick slide to left",
+      "fps": 60,
+      "frames": 18,
+      "seconds": 0.3,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 18,
+          "name": "done"
+        }
+      ],
+      "particleEffects": 0
+    },
+    {
+      "path": "profile/quick_exit/to_right/Quick_slide_to_right.miianim",
+      "name": "Quick slide to right",
+      "fps": 60,
+      "frames": 18,
+      "seconds": 0.3,
+      "actorCount": 1,
+      "extraActorRoles": [],
+      "events": [
+        {
+          "frame": 18,
           "name": "done"
         }
       ],

@@ -36,3 +36,25 @@ UI crop; hair, hats, and custom camera sizing still need their usual padding in 
 
 The authoring source is `tests/MiiAnim.Core.Tests/Authoring/FriendsAnimations.cs`; the
 `WriteFriendsAnimations` test writes the files into these folders.
+
+## Presence: asleep and awake
+
+`FriendsPresenceAnimations` adds the clips WheelWizard plays on the cards. Offline friends sleep; online friends idle
+awake and now and then wave at you. Same card baseline as above, except the asleep baseline: head dropped (+5° pitch)
+and tilted (+9° roll), chest slumped (+4°), eyes closed.
+
+| Folder | File | Timing | Motion |
+| --- | --- | --- | --- |
+| online | `Friends_online_idle_curious.miianim` | 7 s loop | Turns to look at you with a little smile and tilt, then back to the card. |
+| online/wave | `Friends_wave_hello.miianim` | 2.6 s once | Turns to you, raises the hand beside the chin and waves from the elbow three times. |
+| online/wave | `Friends_wave_excited.miianim` | 2.3 s once | Quicker, bouncier wave with a wink and a few sparkles. |
+| online/wave | `Friends_wave_shy.miianim` | 2.9 s once | Small, slow, bashful wave with the head tilted. |
+| asleep | `Friends_asleep_breathing.miianim` | 8 s loop | Two deep breaths with a soft snore, Z's drifting up. |
+| asleep | `Friends_asleep_nodding.miianim` | 9 s loop | The head sinks lower and lower, bobs back up with a start, dozes on. |
+| asleep | `Friends_asleep_bubble.miianim` | 10 s loop | A snore bubble swells from the nose and pops with a snort, then Z's. |
+| doze_off | `Friends_doze_off.miianim` | 2.8 s once | Awake → asleep: heavy blinks, a nod that catches itself, sinks into sleep. |
+| wake_up | `Friends_wake_up.miianim` | 2 s once | Asleep → awake: stirs, startles awake, blinks and brightens. |
+
+Waves swing the forearm from a still elbow (`AnimBuilder.ArmWorldElbow`), so they read as waves even though the hand
+is a ball. The card is cropped tightly, so the hand comes up beside the chin and the Z's rise in the gap between the
+head and the card text (`WheelWizardShot.FriendsCard` checks both in card pixels).

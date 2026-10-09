@@ -233,6 +233,42 @@ public sealed class AnimBuilder
         return Arm(limb, frame, restSpace, swivel, hand, interpolation);
     }
 
+    /// <summary>
+    /// Like <see cref="ArmWorld"/>, with the swivel picked so the elbow lands as close as it can to
+    /// <paramref name="worldElbow"/>. Keying wrists on a circle around one elbow swings the forearm from a still
+    /// upper arm, e.g. a real wave instead of a wobbling (round) hand.
+    /// </summary>
+    public AnimBuilder ArmWorldElbow(
+        MiiLimb limb,
+        int frame,
+        Vector3 worldWrist,
+        Vector3 worldElbow,
+        Vector3 hand = default,
+        Interpolation interpolation = Interpolation.Smooth
+    )
+    {
+        var pose = Rig.Evaluate(Animation, frame);
+        var chest = (int)MiiBone.Chest;
+        Vector3 ToRest(Vector3 world) =>
+            Rig.RestWorldPosition(MiiBone.Chest)
+            + Vector3.Transform(
+                Vector3.Transform(world - pose.WorldPosition[chest], Quaternion.Inverse(pose.WorldRotation[chest])),
+                Rig.RestWorldRotation(MiiBone.Chest)
+            );
+        var wrist = ToRest(worldWrist);
+        var elbow = ToRest(worldElbow);
+        float Miss(float swivel) => Vector3.Distance(EvaluateArm(limb, wrist, swivel).WorldPosition[(int)MiiSkeletonInfo.Chain(limb).Middle], elbow);
+
+        var best = 0f;
+        for (var swivel = -180f; swivel < 180f; swivel += 3f)
+            if (Miss(swivel) < Miss(best))
+                best = swivel;
+        for (var swivel = best - 3f; swivel <= best + 3f; swivel += 0.1f)
+            if (Miss(swivel) < Miss(best))
+                best = swivel;
+        return Arm(limb, frame, wrist, best, hand, interpolation);
+    }
+
     public AnimBuilder ArmsWorld(int frame, Vector3 leftWorldWrist, float swivel = 0, Vector3 hand = default, Interpolation interpolation = Interpolation.Smooth)
     {
         ArmWorld(MiiLimb.ArmL, frame, leftWorldWrist, swivel, hand, interpolation);
@@ -302,10 +338,10 @@ public sealed class AnimBuilder
         return value;
     }
 
-    private (Vector3 Upper, Vector3 Middle) SolveArm(MiiLimb limb, Vector3 wrist, float swivel)
+    /// <summary>The rest pose with just this arm solved by IK for a wrist position (rest-pose character space).</summary>
+    private MiiPose EvaluateArm(MiiLimb limb, Vector3 wrist, float swivel)
     {
-        var (upper, middle, end) = MiiSkeletonInfo.Chain(limb);
-        var offset = wrist - Rig.RestWorldPosition(end);
+        var offset = wrist - Rig.RestWorldPosition(MiiSkeletonInfo.Chain(limb).End);
         var values = new Dictionary<TrackId, float>
         {
             [Limb(limb, Channel.IkBlend)] = 1,
@@ -314,7 +350,13 @@ public sealed class AnimBuilder
             [Limb(limb, Channel.TargetZ)] = offset.Z,
             [Limb(limb, Channel.Swivel)] = swivel,
         };
-        var pose = Rig.Evaluate(id => values.TryGetValue(id, out var v) ? v : float.NaN);
+        return Rig.Evaluate(id => values.TryGetValue(id, out var v) ? v : float.NaN);
+    }
+
+    private (Vector3 Upper, Vector3 Middle) SolveArm(MiiLimb limb, Vector3 wrist, float swivel)
+    {
+        var (upper, middle, end) = MiiSkeletonInfo.Chain(limb);
+        var pose = EvaluateArm(limb, wrist, swivel);
         var reached = pose.WorldPosition[(int)end];
         if (Vector3.Distance(reached, wrist) > 1.5f)
             throw new InvalidOperationException($"{limb} can't reach {wrist} (got {reached}).");
