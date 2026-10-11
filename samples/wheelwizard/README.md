@@ -9,6 +9,7 @@ The clips here are authored for the camera and purpose of each current WheelWiza
 | `leaderboard` | Three full-body Miis on a shared podium, coordinated on one timeline. | [Leaderboard scenes and podium](leaderboard/README.md) |
 | `library` | Tight square head portrait, with restrained shoulder/arm movement. | [My Miis clips](library/README.md) |
 | `profile` | Full-body profile actions and existing window-card animations. | [Profile clips](profile/README.md) |
+| `peek` | Head over the top edge of a card (WheelWizard's MiiPeeker): asleep on the edge, awake while hovered. | [Peek clips](peek/README.md) |
 | `rooms` | Head-only gestures for very small circular lobby portraits. | [Room clips](rooms/README.md) |
 | `shared` | Reusable full-body entrances, exits, idles and reactions. | [Shared clips](shared/README.md) |
 
