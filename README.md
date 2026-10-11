@@ -1,5 +1,7 @@
 # Mii Animator
 
+(keep in mind this is **only** made for creation of animation purposes, codebase if **fully** LLM generated )
+
 A standalone animation tool for Miis. Pose a Mii with FK/IK limbs and squash & stretch, animate it on a
 clean timeline (dope sheet + curve editor), and export a compact `.miianim` file that WheelWizard can play.
 
